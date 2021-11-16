@@ -1,6 +1,11 @@
-import React, {useRef, useState} from "react";
+import React, {useMemo, useRef, useState, useCallback} from "react";
 import UserList from "./UserList";
 import CreateUser from "./CreateUser";
+
+function countActiveUsers(users){
+  console.log('활성 사용자 수 카운팅');
+  return users.filter(user=>user.active).length;
+}
 
 function App() {
   const [inputs, setInputs]=useState({
@@ -8,13 +13,16 @@ function App() {
     email:''
   });
   const {username, email}=inputs;
-  const onChange=(e)=>{
-    const {name, value}=e.target;
-    setInputs({
-      ...inputs,
-      [name]:value
-    });
-  };
+  const onChange=useCallback(
+      (e)=>{
+      const {name, value}=e.target;
+      setInputs({
+        ...inputs,
+        [name]:value
+      });
+    },
+    [inputs]
+  );
 
   const [users, setUsers] = useState([
     {
@@ -38,32 +46,40 @@ function App() {
   ]);
 
   const nextId=useRef(4);
-  const onCreate=()=>{
-    const newUser={
-      id:nextId.current,
-      username,
-      email
-    };
-    setUsers([...users, newUser]);
-    setInputs({
-      username:'',
-      email:''
-    });
-    nextId.current+=1;
-  }
+  const onCreate=useCallback(()=>{
+      const newUser={
+        id:nextId.current,
+        username,
+        email
+      };
+      setUsers([...users, newUser]);
+      setInputs({
+        username:'',
+        email:''
+      });
+      nextId.current+=1;
+    },
+    [users, username, email]
+  );
 
-  const onRemove=(id)=>{
-    setUsers(users.filter(user=>user.id!==id));
-  }
+  const onRemove=useCallback((id)=>{
+      setUsers(users.filter(user=>user.id!==id));
+    },
+    [users]
+  );
 
-  const onToggle=(id)=>{
-    setUsers(
-      users.map((user)=>(
-        user.id===id?{...user, active:!user.active}:user
+  const onToggle=useCallback((id)=>{
+      setUsers(
+        users.map((user)=>(
+          user.id===id?{...user, active:!user.active}:user
+          )
         )
       )
-    )
-  }
+    },
+      [users]
+  );
+
+  const count=useMemo(()=>countActiveUsers(users), [users]);
 
   return (
     <>
@@ -74,6 +90,7 @@ function App() {
       onCreate={onCreate}
       />
       <UserList users={users} onRemove={onRemove} onToggle={onToggle}/>
+      <div>활성 사용자 수 : {count}</div>
     </>
   );
 }
