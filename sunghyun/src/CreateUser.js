@@ -1,8 +1,8 @@
 import React from "react";
 
-function CreateUser({username, email, onChange, onCreate}){
+const CreateUser=({username, email, onChange, onCreate})=>{
   return (
-    <div>
+    <>
       <input
         name="username"
         placeholder="계정명"
@@ -15,9 +15,9 @@ function CreateUser({username, email, onChange, onCreate}){
         onChange={onChange}
         value={email}
       />
-      <button onClick={onCreate}>등록</button>
-    </div>
-  );
+      <button onClick={onCreate}>유저 등록</button>
+    </>
+  )
 }
 
 export default React.memo(CreateUser);

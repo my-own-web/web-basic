@@ -1,37 +1,38 @@
 import React from 'react';
-import styled, {ThemeProvider} from 'styled-components';
-import { darken, lighten } from 'polished';
+import styled, {createGlobalStyle} from 'styled-components';
+import TodoTemplate from "./components/TodoTemplate.js";
+import TodoListHeader from "./components/TodoListHeader";
+import TodoList from "./components/TodoList";
+import TodoListAdd from "./components/TodoListAdd";
+import {TodoProvider} from "./TodoContext";
+import {Route, Routes, Link} from "react-router-dom";
+import Home from "./Home";
+import About from "./About";
 
-const StyledButton=styled.button`
-  display:inline-flex;
-  outline: none;
-  border:none;
-  border-radius: 4px;
-  color:white;
-  font-weight: bold;
-  cursor:pointer;
-  padding-left:1rem;
-  padding-right: 1rem;
-  
-  height:2.5rem;
-  font-size:1rem;
+const GlobalStyle=createGlobalStyle`
+  body{
+    background: #f8f0fc;
+  }
+`
 
-  background: pink;
-  &:hover {
-    background: ${lighten(0.1, 'pink')};
-  }
-  &:active {
-    background: ${darken(0.1, 'pink')};
-  }
-  
-  & + & {
-    margin-left: 1rem;
-  }
-  
-`;
-
-function App(){
-  return <StyledButton>BUTTON</StyledButton>
+const App=()=>{
+  return (
+    <div>
+      <ul>
+        <li>
+          <Link to='/'>메인 페이지</Link>
+        </li>
+        <li>
+          <Link to='/about'>소개 페이지</Link>
+        </li>
+      </ul>
+      <Routes>
+        <Route path='/' element={<Home />}/>
+        <Route path='/about' element={<About />} />
+      </Routes>
+    </div>
+  );
 }
+
 
 export default App;
