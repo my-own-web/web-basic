@@ -6,10 +6,6 @@ const profileData={
     name:'김성현',
     description:'이름은 김성현이고 서강대에 다니고 있다.'
   },
-  jakads:{
-    name:'김창민',
-    description:'이름은 김창민이고 서강대에 다니고 있다.'
-  }
 };
 
 const Profile=()=>{
