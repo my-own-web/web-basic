@@ -3,7 +3,7 @@ import styled, {createGlobalStyle} from 'styled-components';
 import {Route, Routes, Link} from "react-router-dom";
 import Home from "./Home";
 import About from "./About";
-import Profile from "./Profile";
+import Profiles from "./Profiles";
 
 const GlobalStyle=createGlobalStyle`
   body{
@@ -22,11 +22,14 @@ const App=()=>{
         <li>
           <Link to='/about'>소개 페이지</Link>
         </li>
+        <li>
+          <Link to='/profiles'>프로필 목록</Link>
+        </li>
       </ul>
       <Routes>
         <Route path='/' element={<Home />}/>
         <Route path='/about' element={<About />} />
-        <Route path='/profiles/:username' element={<Profile />} />
+        <Route path='/profiles' element={<Profiles />} />
       </Routes>
     </div>
   );
