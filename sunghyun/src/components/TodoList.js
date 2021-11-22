@@ -1,16 +1,18 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 import TodoListItem from "./TodoListItem";
-import {useTodoState} from "../TodoContext";
+import {useTodoListState} from "./TodoListContext";
 
 const TodoListBlock=styled.div`
   flex:1;
-  padding:20px 32px 48px 32px;
+  //가능한 영역 꽉 채우기
+  padding:20px 32px;
+  padding-bottom: 48px;
   overflow-y:auto;
-`
+`;
 
 const TodoList=()=>{
-  const todos=useTodoState();
+  const todos=useTodoListState();
 
   return (
     <TodoListBlock>
@@ -22,7 +24,8 @@ const TodoList=()=>{
         done={todo.done}
         />
       ))}
-    </TodoListBlock>)
+    </TodoListBlock>
+  );
 }
 
 export default TodoList;

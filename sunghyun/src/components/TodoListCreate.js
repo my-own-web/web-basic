@@ -1,108 +1,106 @@
-import React, {useState} from 'react';
-import styled, {css} from 'styled-components';
-import {MdAdd} from 'react-icons/md';
-import {useTodoDispatch, useTodoNextID} from "../TodoContext";
+import React, { useState } from 'react';
+import styled, { css } from 'styled-components';
+import { MdAdd } from 'react-icons/md';
+import {useTodoListDispatch, useTodoListNextId} from "./TodoListContext";
 
-const CircleButton=styled.button`
+const CircleButton=styled.div`
   background: #38d9a9;
   &:hover{
     background: #63e6be;
   }
-  &:active{
+  &:active {
     background: #20c997;
   }
-  
+  z-index:5;
   cursor:pointer;
   width:80px;
   height:80px;
-  border-radius: 50%;
-  display: flex;
   align-items: center;
   justify-content: center;
-  font-size:60px;
+  font-size: 60px;
   position: absolute;
-  left:50%;
-  bottom:0px;
+  left: 50%;
+  bottom: 0px;
   transform: translate(-50%, 50%);
-  color:white;
-  border:none;
+  color: white;
+  border-radius: 50%;
+  border: none;
   outline: none;
-  
-  transition:0.1s all ease-in;
-  
-  ${props=>
-    props.open&&
-    css`
+  display: flex;
+
+  transition: 0.125s all ease-in;
+  ${props =>
+          props.open &&
+          css`
       background: #ff6b6b;
-      &:hover{
+      &:hover {
         background: #ff8787;
       }
-      &:active{
+      &:active {
         background: #fa5252;
       }
       transform: translate(-50%, 50%) rotate(45deg);
-    `
-  }
+    `}
 `;
 
-const InsertFormPositioner=styled.div`
-  width:100%;
-  bottom:0;
-  left:0;
-  position:absolute;
+const InsertFormPositioner = styled.div`
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  position: absolute;
 `;
 
-const InsertForm=styled.form`
-  background: #f8f9fa;
+const InsertForm = styled.form`
   padding: 32px 32px 72px 32px;
+  background: #f8f9fa;
+
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
   border-top: 1px solid #e9ecef;
 `;
 
-const Input=styled.input`
-  padding:12px;
+const Input = styled.input`
+  padding: 12px;
   border-radius: 4px;
   border: 1px solid #dee2e6;
-  width:100%;
-  outline:none;
+  width: 100%;
+  outline: none;
   font-size: 18px;
   box-sizing: border-box;
 `;
 
-const TodoListAdd=()=>{
-  //새로운 아이템을 추가하는 창
+const TodoListCreate=()=>{
   const [open, setOpen]=useState(false);
   const [value, setValue]=useState('');
 
-  const dispatch=useTodoDispatch();
-  const nextID=useTodoNextID();
+  const dispatch=useTodoListDispatch();
+  const nextId=useTodoListNextId();
 
   const onToggle=()=>setOpen(!open);
   const onChange=(e)=>setValue(e.target.value);
   const onSubmit=(e)=>{
     e.preventDefault();
     dispatch({
-      type:"CREATE",
+      type:'CREATE',
       todo:{
-        id:nextID.current,
+        id:nextId.current,
         text:value,
         done:false
       }
-    })
+    });
     setValue('');
     setOpen(false);
-    nextID.current+=1;
+    nextId.current+=1;
   }
 
   return (
     <>
-      {open&&(
+      {open && (
         <InsertFormPositioner>
           <InsertForm onSubmit={onSubmit}>
             <Input
               autoFocus
-              placeholder="새로운 할 일을 입력 후 Enter를 누르기"
+              placeholder="할 일을 입력 후 Enter를 누르시오"
               onChange={onChange}
               value={value}
             />
@@ -113,8 +111,8 @@ const TodoListAdd=()=>{
         <MdAdd />
       </CircleButton>
     </>
-
-  )
+  );
 }
 
-export default React.memo(TodoListAdd);
+export default React.memo(TodoListCreate);
+//불필요한 리렌더링 방지

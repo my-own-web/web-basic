@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { MdDone, MdDelete } from 'react-icons/md';
-import {useTodoDispatch} from "../TodoContext";
+import {MdDone, MdDelete} from "react-icons/md";
+import {useTodoListDispatch} from "./TodoListContext";
 
 const RemoveButton=styled.div`
   display:flex;
@@ -10,20 +10,19 @@ const RemoveButton=styled.div`
   color:#dee2e6;
   font-size: 24px;
   cursor:pointer;
-  opacity: 0;
   &:hover{
     color:#ff6b6b;
   }
 `;
 
-const TodoItemBlock=styled.div`
-  display: flex;
-  align-items:center;
+const TodoListItemBlock=styled.div`
+  display:flex;
+  align-items: center;
   padding-top:12px;
-  padding-bottom:12px;
+  padding-bottom: 12px;
   &:hover{
     ${RemoveButton}{
-      opacity: 1;
+      display:initial;
     }
   }
 `;
@@ -41,8 +40,8 @@ const CheckCircle=styled.div`
   cursor: pointer;
   //만약 done 상태면 끝났다는 상태를 보여주도록 css 설정
   ${props =>
-          props.done &&
-          css`
+    props.done &&
+    css`
       border: 1px solid #38d9a9;
       color: #38d9a9;
     `}
@@ -60,22 +59,19 @@ const Text = styled.div`
 `;
 
 const TodoListItem=({id, done, text})=>{
-  const dispatch=useTodoDispatch();
-  const onToggle=()=>dispatch({type:"TOGGLE", id});
-  const onRemove=()=>dispatch({type:"REMOVE", id});
+  const dispatch=useTodoListDispatch();
+  const onToggle=()=>dispatch({type:'TOGGLE', id});
+  const onRemove=()=>dispatch({type:'REMOVE', id});
 
   return (
-    <TodoItemBlock>
-      <CheckCircle done={done} onClick={onToggle}>
-        {done && <MdDone/>}
-      </CheckCircle>
-      {/* done 상태일 때만 MdDone 을 표시해 준다 */}
+    <TodoListItemBlock>
+      <CheckCircle done={done} onClick={onToggle}>{done && <MdDone />}</CheckCircle>
       <Text done={done}>{text}</Text>
       <RemoveButton onClick={onRemove}>
         <MdDelete />
       </RemoveButton>
-    </TodoItemBlock>
-  )
+    </TodoListItemBlock>
+  );
 }
 
 export default React.memo(TodoListItem);
