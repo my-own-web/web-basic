@@ -1,6 +1,6 @@
 import React from "react";
 import styled, {createGlobalStyle, css} from "styled-components";
-import TodoListTemplate from "./components/TodoListTemplate";
+import TodoListTemplateBlock from "./components/TodoListTemplate";
 import {darken} from "polished";
 
 const GlobalStyle=createGlobalStyle`
@@ -26,6 +26,7 @@ const LoginFormContainer=styled.div`
   flex-direction: column;
   align-items: center;
   h1{
+    margin:5px;
     font-size:2.5rem;
   }
 `;
@@ -45,6 +46,7 @@ const LoginButton=styled.button`
   font-size:1.5rem;
   border-radius: 7px;
   border:none;
+  margin:1rem;
   
   &:hover{
     ${props=>{
@@ -56,9 +58,17 @@ const LoginButton=styled.button`
   }
 `;
 
+const LoginPageTemplateBlock=styled(TodoListTemplateBlock)`
+  height:600px;
+`;
+
+const LoginPageTemplate=({children})=>{
+  return <LoginPageTemplateBlock>{children}</LoginPageTemplateBlock>;
+}
+
 const LoginPage=()=>{
   return (
-    <TodoListTemplate>
+    <LoginPageTemplate>
       <GlobalStyle />
       <LoginHeaderBlock>
         <h1>Witch's TodoList</h1>
@@ -70,7 +80,7 @@ const LoginPage=()=>{
         <LoginInputForm type="password"/>
         <LoginButton width='8rem' height='3rem' background='#e599fc'>로그인</LoginButton>
       </LoginFormContainer>
-    </TodoListTemplate>
+    </LoginPageTemplate>
   )
 }
 
