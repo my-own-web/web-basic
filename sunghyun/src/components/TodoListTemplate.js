@@ -18,8 +18,8 @@ const TodoListTemplateBlock=styled.div`
   flex-direction: column;
 `;
 
-const TodoTemplate=({children})=>{
+const TodoListTemplate=({children})=>{
   return <TodoListTemplateBlock>{children}</TodoListTemplateBlock>;
 }
 
-export default TodoTemplate;
+export default TodoListTemplate;
