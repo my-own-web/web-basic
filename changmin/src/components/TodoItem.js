@@ -13,7 +13,8 @@ const Remove = styled.div`
     color: #f53;
   }
   /* 마우스를 올렸을 때(&:hover) 색이 빨갛게 변함 */
-  display: none; /* 기본값으로 삭제 버튼은 보이지 않음 */
+  opacity: 0; /* 기본값으로 삭제 버튼은 보이지 않음 */
+  transition: 0.1s linear
 `;
 
 const TodoItemBlock = styled.div`
@@ -22,7 +23,7 @@ const TodoItemBlock = styled.div`
   padding: 12px 0;
   &:hover {
     ${Remove} {
-      display: initial;
+      opacity: 1;
     }
   }
   /* 마우스를 올렸을 때(&:hover) 삭제 버튼을 보여줌 */
@@ -34,6 +35,7 @@ const CheckCircle = styled.div`
   border-radius: 16px;
   border: 1px solid #ddd;
   font-size: 24px;
+  /* font-size는 체크마크 크기 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,11 +53,11 @@ const CheckCircle = styled.div`
 const Text = styled.div`
   flex: 1;
   font-size: 21px;
-  color: #555;
+  color: #eee;
   ${props =>
     props.done &&
     css`
-      color: #eee;
+      color: #555;
     `}
   /* props.done이 true면 뒤의 css로 스타일 변경 */
 `;
