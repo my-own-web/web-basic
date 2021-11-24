@@ -1,7 +1,8 @@
 import React from "react";
 import styled, {createGlobalStyle, css} from "styled-components";
-import TodoListTemplateBlock from "./components/TodoListTemplate";
 import {darken} from "polished";
+import {Input} from "./components/TodoListCreate";
+import PageTemplateBlock from "./components/PageTemplate";
 
 const GlobalStyle=createGlobalStyle`
   body{
@@ -21,7 +22,7 @@ const LoginHeaderBlock=styled.div`
   }
 `;
 
-const LoginFormContainer=styled.div`
+const LoginFormColumnContainer=styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -31,19 +32,31 @@ const LoginFormContainer=styled.div`
   }
 `;
 
-const LoginInputForm=styled.input`
-  width:20rem;
-  height:2.5rem;
-  font-size:2.5rem;
-  type:${props=>props.type && 'text'};
+const LoginFormRowContainer=styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  h1{
+    margin:5px;
+    font-size:2.5rem;
+  }
+`;
+
+const InputFormPositioner=styled.form`
+  padding: 0 0 25px 0;
+  background: #f8f9fa;
+
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
 `;
 
 const LoginButton=styled.button`
   width:${props=>props.width};
   height:${props=>props.height};
   background: ${props=>props.background};
-  color:white;
-  font-size:1.5rem;
+  color:${props=>props.color || 'white'};
+  font-size:1.2rem;
   border-radius: 7px;
   border:none;
   margin:1rem;
@@ -58,12 +71,8 @@ const LoginButton=styled.button`
   }
 `;
 
-const LoginPageTemplateBlock=styled(TodoListTemplateBlock)`
-  height:600px;
-`;
-
 const LoginPageTemplate=({children})=>{
-  return <LoginPageTemplateBlock>{children}</LoginPageTemplateBlock>;
+  return <PageTemplateBlock height='650px'>{children}</PageTemplateBlock>;
 }
 
 const LoginPage=()=>{
@@ -73,13 +82,22 @@ const LoginPage=()=>{
       <LoginHeaderBlock>
         <h1>Witch's TodoList</h1>
       </LoginHeaderBlock>
-      <LoginFormContainer>
+      <LoginFormColumnContainer>
         <h1>ID</h1>
-        <LoginInputForm />
+        <InputFormPositioner>
+          <Input />
+        </InputFormPositioner>
         <h1>PASSWORD</h1>
-        <LoginInputForm type="password"/>
+        <InputFormPositioner>
+          <Input type="password" />
+        </InputFormPositioner>
         <LoginButton width='8rem' height='3rem' background='#e599fc'>로그인</LoginButton>
-      </LoginFormContainer>
+      </LoginFormColumnContainer>
+      <LoginFormRowContainer>
+        <LoginButton width='7rem' height='3rem' background='white' color='gray'>아이디찾기</LoginButton>
+        <LoginButton width='8rem' height='3rem' background='white' color='gray'>비밀번호찾기</LoginButton>
+        <LoginButton width='7rem' height='3rem' background='white' color='gray'>회원가입</LoginButton>
+      </LoginFormRowContainer>
     </LoginPageTemplate>
   )
 }

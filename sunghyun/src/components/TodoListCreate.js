@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { MdAdd } from 'react-icons/md';
 import {useTodoListDispatch, useTodoListNextId} from "./TodoListContext";
+import Input from "./Input";
 
 const CircleButton=styled.div`
   background: #38d9a9;
@@ -59,15 +60,6 @@ const InsertForm = styled.form`
   border-top: 1px solid #e9ecef;
 `;
 
-const Input = styled.input`
-  padding: 12px;
-  border-radius: 4px;
-  border: 1px solid #dee2e6;
-  width: 100%;
-  outline: none;
-  font-size: 18px;
-  box-sizing: border-box;
-`;
 
 const TodoListCreate=()=>{
   const [open, setOpen]=useState(false);
@@ -114,5 +106,6 @@ const TodoListCreate=()=>{
   );
 }
 
+export {Input};
 export default React.memo(TodoListCreate);
 //불필요한 리렌더링 방지
