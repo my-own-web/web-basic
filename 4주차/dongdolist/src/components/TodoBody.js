@@ -1,4 +1,5 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import TodoCreate from "./TodoCreate";
 import TodoItem from "./TodoItem";
@@ -16,7 +17,7 @@ const initialData = [
 export default function TodoBody() {
   // todoList element를 저장
   // initialData를 초기 data로 갖도록 설정
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
   // 제일 마지막으로 element에 할당한 id를 저장
   const [lastId, setLastId] = useState(initialData.length);
   const TodoItemLists = () =>
@@ -31,6 +32,15 @@ export default function TodoBody() {
         />
       );
     });
+  async function getInitialData() {
+    const response = await axios.get("http://localhost:3100/api/todo");
+    if(response.data.status === 200) {
+      setData(response.data.data)
+    }
+  }
+  useEffect(() => {
+    getInitialData()
+  }, []);
   return (
     <TodoBodyWrap>
       <TodoItemLists />
