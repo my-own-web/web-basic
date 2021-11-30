@@ -1,4 +1,4 @@
-import {Input} from "./TodoListCreate";
+import Input from "./Input";
 import {LoginFormColumnContainer} from "./LoginPageContainer";
 import React from "react";
 import styled from "styled-components";

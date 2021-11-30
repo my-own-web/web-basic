@@ -21,7 +21,7 @@ const CircleButton=styled.div`
   font-size: 60px;
   position: absolute;
   left: 50%;
-  bottom: 0px;
+  bottom: 0;
   transform: translate(-50%, 50%);
   color: white;
   border-radius: 50%;
@@ -93,7 +93,7 @@ const TodoListCreate=()=>{
           <InsertForm onSubmit={onSubmit}>
             <Input
               autoFocus
-              placeholder="할 일을 입력 후 Enter를 누르시오"
+              placeholder="할 일을 입력 후 Enter키를 누르시오"
               onChange={onChange}
               value={value}
             />
@@ -107,6 +107,5 @@ const TodoListCreate=()=>{
   );
 }
 
-export {Input};
 export default React.memo(TodoListCreate);
 //불필요한 리렌더링 방지
