@@ -22,6 +22,7 @@ const TodoList=()=>{
         id={todo.id}
         text={todo.text}
         done={todo.done}
+        editing={todo.editing}
         />
       ))}
     </TodoListBlock>

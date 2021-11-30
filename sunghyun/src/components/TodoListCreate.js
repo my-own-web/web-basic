@@ -77,7 +77,8 @@ const TodoListCreate=()=>{
       todo:{
         id:nextId.current,
         text:value,
-        done:false
+        done:false,
+        editing:false
       }
     });
     setValue('');

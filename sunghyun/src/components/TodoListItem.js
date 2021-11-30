@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import {MdDone, MdDelete} from "react-icons/md";
+import {MdDone, MdDelete, MdEdit} from "react-icons/md";
 import {useTodoListDispatch} from "./TodoListContext";
 
 const RemoveButton=styled.div`
@@ -12,6 +12,18 @@ const RemoveButton=styled.div`
   cursor:pointer;
   &:hover{
     color:#ff6b6b;
+  }
+`;
+
+const EditButton=styled.div`
+  display:flex;
+  align-items:center;
+  justify-content: center;
+  color:#dee2e6;
+  font-size: 24px;
+  cursor:pointer;
+  &:hover{
+    color:#cc5de8;
   }
 `;
 
@@ -58,15 +70,20 @@ const Text = styled.div`
     `}
 `;
 
-const TodoListItem=({id, done, text})=>{
+
+const TodoListItem=({id, done, text, editing})=>{
   const dispatch=useTodoListDispatch();
   const onToggle=()=>dispatch({type:'TOGGLE', id});
   const onRemove=()=>dispatch({type:'REMOVE', id});
+  const onEdit=()=>dispatch({type:'EDIT', id});
 
   return (
     <TodoListItemBlock>
       <CheckCircle done={done} onClick={onToggle}>{done && <MdDone />}</CheckCircle>
-      <Text done={done}>{text}</Text>
+      <Text contentEditable={editing} done={done}>{text}</Text>
+      <EditButton onClick={onEdit}>
+        <MdEdit />
+      </EditButton>
       <RemoveButton onClick={onRemove}>
         <MdDelete />
       </RemoveButton>

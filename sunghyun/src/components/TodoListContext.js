@@ -4,22 +4,26 @@ const initialTodos = [
   {
     id: 1,
     text: '프로젝트 생성하기',
-    done: true
+    done: true,
+    editing: false
   },
   {
     id: 2,
     text: '컴포넌트 스타일링하기',
-    done: true
+    done: true,
+    editing: false
   },
   {
     id: 3,
     text: 'Context 만들기',
-    done: false
+    done: false,
+    editing: false
   },
   {
     id: 4,
     text: '기능 구현하기',
-    done: false
+    done: false,
+    editing: false
   }
 ];
 
@@ -34,6 +38,10 @@ function todoReducer(state, action){
       );
     case 'REMOVE':
       return state.filter(todo => todo.id !== action.id);
+    case 'EDIT':
+      return state.map(todo=>
+        todo.id===action.id ? {...todo, editing: !todo.editing}: todo
+      );
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
