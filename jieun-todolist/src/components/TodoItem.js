@@ -5,6 +5,7 @@ import { MdDone, MdDelete, MdEdit } from 'react-icons/md';
 import { BiXCircle } from 'react-icons/bi';
 import { useTodoDispatch } from '../TodoContext';
 
+// 입력 취소 버튼 블록
 const QuitEdit = styled.div`
   display: flex;
   color: #dee2e6;
@@ -74,6 +75,7 @@ const Text = styled.div`
     `}
 `;
 
+// 수정 입력 칸
 const EditInput = styled.input`
   padding: 10px;
   margin-right:10px;
@@ -86,6 +88,7 @@ const EditInput = styled.input`
 `
 
 function TodoItem({ id, done, text }) {
+  // input: 수정된 입력. 배열에 적용은 안 됨.
   const [input, setInput] = useState(text);
   const onChange = e => {
     return setInput(e.target.value);
@@ -94,6 +97,7 @@ function TodoItem({ id, done, text }) {
   const dispatch = useTodoDispatch();
   const onToggle = () => dispatch({ type: 'TOGGLE', id });
   const onRemove = () => dispatch({ type: 'REMOVE', id });
+  // 수정된 입력을 배열에 적용.
   const onEdit = () => {
     dispatch({
       type: 'EDIT',
@@ -102,6 +106,8 @@ function TodoItem({ id, done, text }) {
     });
   };
 
+  // edit: false: text 보임
+  // edit: true: text자리에 입력칸 열기
   const [edit, setEdit] = useState(false);
   const onStartEdit = () => {
     return (
@@ -109,6 +115,7 @@ function TodoItem({ id, done, text }) {
     );
   };
 
+  // 입력칸에서 엔터키 누르면 입력을 배열에 적용. 입력칸 끄기
   const onKeyPress=(e)=>{
     if(e.key=='Enter'){
       onEdit();
@@ -122,14 +129,14 @@ function TodoItem({ id, done, text }) {
       {edit? 
       <>
       <EditInput value={input} onChange={onChange} onKeyPress={onKeyPress}/>
-       <QuitEdit onClick={onStartEdit}>
-        <BiXCircle />
+       <QuitEdit onClick={onStartEdit}> {/* 수정한 것을 저장하지 않고 입력 취소 */}
+        <BiXCircle /> 
       </QuitEdit>
       </>
       : <>
       <Text done={done} onClick={onStartEdit}>{text}</Text>
             <Remove onClick={onRemove}>
-        <MdDelete /> {/** 쓰레기통 아이콘 */}
+        <MdDelete /> {/* 쓰레기통 아이콘 */}
       </Remove>
       </>
       }     
