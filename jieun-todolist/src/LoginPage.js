@@ -90,11 +90,17 @@ function LoginPage() {
         setInputs({ id: '', password: '' });
     };
 
+    const onKeyPress = (e) =>{
+        if(e.key=='Enter'){
+            onSubmit();
+        }
+    }
+
     return (
         <>
             <LoginBlock>
                 <Input name="id" placeholder="ID" onChange={onChange} value={inputs.id} />
-                <Input name="password" placeholder="PASSWORD" onChange={onChange} value={inputs.password} />
+                <Input name="password" placeholder="PASSWORD" onChange={onChange} value={inputs.password} onKeyPress={onKeyPress}/>
                 <ButtonBar>
                 <Button color='pink' style={{marginRight:'40%'}}>가입</Button>
                 <Button onClick={onSubmit}>로그인</Button>
