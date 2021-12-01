@@ -23,6 +23,7 @@ const initialTodos = [
       }
 ];
 
+// state: Todos 배열
 function todoReducer(state, action){ 
     switch(action.type){
         case 'CREATE':
@@ -31,6 +32,8 @@ function todoReducer(state, action){
             return state.map(todo => todo.id === action.id? {...todo, done: !todo.done} : todo );
         case 'REMOVE':
             return state.filter(todo => todo.id !== action.id);
+        case 'EDIT':
+            return state.map(todo => todo.id===action.id?{...todo, text: action.text} : todo);
         default:
             throw new Error(`Unhandled action type: ${action.type}`);
     }
