@@ -1,6 +1,6 @@
 import React, {useReducer, createContext, useContext, useRef, useState} from 'react';
 
-// (dbg) example infoss
+// (dbg) example infos
 export const infos = [{
     id: 'id',
     password: 'password',
@@ -16,9 +16,3 @@ export const infos = [{
     password: 'b',
     login: false
 }];
-
-// const LoginContext = createContext();
-
-// export function LoginContext(){
-//     const [valid, setValid] = useState(false);
-// }

@@ -27,7 +27,6 @@ const Button = styled.button`
     width: 30%;
     padding: 3px;
     margin-top:10px;
-    // margin: 10px 5px 0px 5px;
     background: ${props => props.color || '#38d9a9'};
     &:hover{
         background: ${props => lighten(0.1, props.color || '#38d9a9')};
@@ -35,15 +34,6 @@ const Button = styled.button`
     &:active{
         background: ${props => darken(0.1, props.color || '#38d9a9')};
     }
-`;
-
-// currently <div> with no design
-const ButtonBar = styled.div`
-    // border:solid black;
-    // display: flex;
-    // // grid-template-columns: 1fr 1fr;
-    // margin: 0;
-    // padding: 0;
 `;
 
 const Input = styled.input`
@@ -77,9 +67,8 @@ function LoginPage() {
         id: '',
         password: ''
     });
-    // 제출한 id, password가 infos 배열에 존재하면 true
-    // chk: not using
-    const [valid, setValid] = useState(false);
+    
+    // wrong: true->invalid ID/PASSWORD
     const [wrong, setWrong] = useState(false);
 
     const onChange = (e) => {
@@ -110,12 +99,6 @@ function LoginPage() {
         }
     }
 
-    const onWrongKeyPress = (e) => {
-        if (e.key == 'Enter') {
-            setWrong(false);
-            console.log('Wrong->Enter');//dbg
-        }
-    }
     const onClick = () => {
             setWrong(false);
     }
@@ -125,10 +108,10 @@ function LoginPage() {
             <LoginBlock>
                 <Input name="id" placeholder="ID" onChange={onChange} value={inputs.id} />
                 <Input name="password" placeholder="PASSWORD" onChange={onChange} value={inputs.password} onKeyPress={onInputKeyPress} />
-                <ButtonBar>
+                <div>
                     <Button color='pink' style={{ marginRight: '40%' }}>가입</Button>
                     <Button onClick={onSubmit}>로그인</Button>
-                </ButtonBar>
+                </div>
             </LoginBlock>
 
 
