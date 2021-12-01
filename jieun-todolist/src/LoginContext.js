@@ -1,7 +1,7 @@
 import React, {useReducer, createContext, useContext, useRef, useState} from 'react';
 
-// (dbg) example info
-export const info = [{
+// (dbg) example infoss
+export const infos = [{
     id: 'id',
     password: 'password',
     login: false

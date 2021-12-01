@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import styled, {css} from 'styled-components';
+import styled, { css } from 'styled-components';
 import { darken, lighten } from 'polished';
-import { info } from './LoginContext';
+import { infos } from './LoginContext';
 import { useNavigate } from 'react-router-dom';
+import Popup from './login/Popup';
 
 const LoginBlock = styled.div`
     width: 200px;
@@ -27,16 +28,17 @@ const Button = styled.button`
     padding: 3px;
     margin-top:10px;
     // margin: 10px 5px 0px 5px;
-    background: ${props=>props.color || '#38d9a9'};
+    background: ${props => props.color || '#38d9a9'};
     &:hover{
-        background: ${props=>lighten(0.1, props.color || '#38d9a9')};
+        background: ${props => lighten(0.1, props.color || '#38d9a9')};
     }
     &:active{
-        background: ${props=>darken(0.1, props.color || '#38d9a9')};
+        background: ${props => darken(0.1, props.color || '#38d9a9')};
     }
 `;
 
-const ButtonBar=styled.div`
+// currently <div> with no design
+const ButtonBar = styled.div`
     // border:solid black;
     // display: flex;
     // // grid-template-columns: 1fr 1fr;
@@ -54,10 +56,10 @@ const Input = styled.input`
   box-sizing: border-box;
 `;
 
-// info 배열에 id, password가 존재하면 true
+// infos 배열에 id, password가 존재하면 true
 // 없으면 false 반환
 function isValid({ id, password }) {
-    const index = info.find((element) => element.id === id);
+    const index = infos.find((element) => element.id === id);
     if (index && index.password === password) return true;
     else return false;
 }
@@ -75,8 +77,10 @@ function LoginPage() {
         id: '',
         password: ''
     });
-    // 제출한 id, password가 info 배열에 존재하면 true
+    // 제출한 id, password가 infos 배열에 존재하면 true
+    // chk: not using
     const [valid, setValid] = useState(false);
+    const [wrong, setWrong] = useState(false);
 
     const onChange = (e) => {
         const { value, name } = e.target;
@@ -90,41 +94,60 @@ function LoginPage() {
     const onSubmit = () => {
         setSubmits({ id: inputs.id, password: inputs.password });
         // setValid(isValid(inputs));
-        if(isValid(inputs)){ // 투두리스트 페이지로 이동
+        if (isValid(inputs)) { // 투두리스트 페이지로 이동
+            setWrong(false);
             navigate("/todolist");
         }
-        else setInputs({ id: '', password: '' });
+        else {
+            setInputs({ id: '', password: '' });
+            setWrong(true);
+        }
     };
 
-    const onKeyPress = (e) =>{
-        if(e.key=='Enter'){
+    const onInputKeyPress = (e) => {
+        if (e.key == 'Enter') {
             onSubmit();
         }
+    }
+
+    const onWrongKeyPress = (e) => {
+        if (e.key == 'Enter') {
+            setWrong(false);
+            console.log('Wrong->Enter');//dbg
+        }
+    }
+    const onClick = () => {
+            setWrong(false);
     }
 
     return (
         <>
             <LoginBlock>
                 <Input name="id" placeholder="ID" onChange={onChange} value={inputs.id} />
-                <Input name="password" placeholder="PASSWORD" onChange={onChange} value={inputs.password} onKeyPress={onKeyPress}/>
+                <Input name="password" placeholder="PASSWORD" onChange={onChange} value={inputs.password} onKeyPress={onInputKeyPress} />
                 <ButtonBar>
-                <Button color='pink' style={{marginRight:'40%'}}>가입</Button>
-                <Button onClick={onSubmit}>로그인</Button>
+                    <Button color='pink' style={{ marginRight: '40%' }}>가입</Button>
+                    <Button onClick={onSubmit}>로그인</Button>
                 </ButtonBar>
             </LoginBlock>
 
+
+            {/* action for wrong login*/}
+            <Popup show={wrong}>
+                <div >Wrong ID or PASSWORD</div>
+                <Button onClick={onClick} color='#CFD4D1' style={{float:'right'}}>OK</Button>
+            </Popup>
+
             {/*dbg*/}
-            <div style={{ margin: '0 auto', width: '200px'}}>
+            <div style={{ margin: '0 auto', width: '200px' }}>
                 <p>
                     <div><b>ID:</b> {submits.id}</div>
                     <div><b>PASSWORD:</b> {submits.password}</div>
                 </p>
 
                 <p style={{ color: "blue" }}>
-                    <div><b>info 배열: id password</b></div>
-                    <div>a b</div>
-                    <div>jieun kwon</div>
-                    <div>id password</div>
+                    <div><b>infos 배열: id password</b></div>
+                    {infos.map(info => <div>{info.id} {info.password}</div>)}
                 </p>
             </div>
         </>
