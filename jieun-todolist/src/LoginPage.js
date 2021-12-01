@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled, {css} from 'styled-components';
 import { darken, lighten } from 'polished';
 import { info } from './LoginContext';
+import { useNavigate } from 'react-router-dom';
 
 const LoginBlock = styled.div`
     width: 200px;
@@ -62,6 +63,8 @@ function isValid({ id, password }) {
 }
 
 function LoginPage() {
+    // 페이지 이동 준비
+    let navigate = useNavigate();
     // 입력
     const [inputs, setInputs] = useState({
         id: '',
@@ -86,8 +89,11 @@ function LoginPage() {
     // 로그인 버튼 누르면 그때까지 입력받은 id, password를 제출, validity check
     const onSubmit = () => {
         setSubmits({ id: inputs.id, password: inputs.password });
-        setValid(isValid(inputs));
-        setInputs({ id: '', password: '' });
+        // setValid(isValid(inputs));
+        if(isValid(inputs)){ // 투두리스트 페이지로 이동
+            navigate("/todolist");
+        }
+        else setInputs({ id: '', password: '' });
     };
 
     const onKeyPress = (e) =>{
@@ -112,11 +118,6 @@ function LoginPage() {
                 <p>
                     <div><b>ID:</b> {submits.id}</div>
                     <div><b>PASSWORD:</b> {submits.password}</div>
-                    <div style={{
-                        color: valid ? "green" :
-                            "red",
-                        fontSize: 'xx-large'
-                    }}>{valid ? 'valid' : 'Invalid'}</div>
                 </p>
 
                 <p style={{ color: "blue" }}>
