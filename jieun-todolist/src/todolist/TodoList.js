@@ -9,12 +9,12 @@ const TodoListBlock = styled.div`
   padding: 20px 32px;
   padding-bottom: 48px;
   overflow-y: auto; // 내용 넘칠 때
-  background: #FBEFFB; /* 사이즈 조정이 잘 되고 있는지 확인하기 위한 임시 스타일 */
+  background: #FBEFFB; // 연분홍
 `;
 
 function TodoList() {
   const todos = useTodoState();
-
+  console.log(todos); //dbg: 배열 변경 확인
   return <TodoListBlock>
      {todos.map(todo => (
        <TodoItem
