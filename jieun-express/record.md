@@ -22,3 +22,10 @@ app.listen(port, () => {
 
 $cd server
 $node server.js
+
+express:
+    yarn add cors
+    yarn add body-parser
+
+react:
+    yarn add axios

@@ -4,6 +4,7 @@ import { darken, lighten } from 'polished';
 import { infos } from './LoginContext';
 import { useNavigate } from 'react-router-dom';
 import Popup from './login/Popup';
+import axios from 'axios';
 
 const LoginBlock = styled.div`
     width: 200px;
@@ -46,14 +47,6 @@ const Input = styled.input`
   box-sizing: border-box;
 `;
 
-// infos 배열에 id, password가 존재하면 true
-// 없으면 false 반환
-function isValid({ id, password }) {
-    const index = infos.find((element) => element.id === id);
-    if (index && index.password === password) return true;
-    else return false;
-}
-
 function LoginPage() {
     // 페이지 이동 준비
     let navigate = useNavigate();
@@ -79,10 +72,34 @@ function LoginPage() {
         });
     };
 
+    // express에 데이터 보내기. onSubmit에서 호출
+    const fetchInfo = async() =>{
+        const response = await axios({
+            url: 'http://localhost:3001/info',
+            method: 'post',
+            data: {
+                id: inputs.id
+            }
+        });
+        console.log(response.data);
+        console.log('post check');
+    };
+
+    // infos 배열에 id, password가 존재하면 true
+    // 없으면 false 반환
+    const isValid = ({ id, password }) => {
+        const index = infos.find((element) => element.id === id);
+        if (index && index.password === password) return true;
+        else return false;
+    };
+
+
     // 로그인 버튼 누르면 그때까지 입력받은 id, password를 제출, validity check
     const onSubmit = () => {
         setSubmits({ id: inputs.id, password: inputs.password });
-        // setValid(isValid(inputs));
+
+        fetchInfo();
+
         if (isValid(inputs)) { // 투두리스트 페이지로 이동
             setWrong(false);
             navigate("/todolist");
