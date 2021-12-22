@@ -8,14 +8,50 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(bodyParser.json());
 
-// app.get('/', (req, res)=>{
-//     res.send('Hello World!')
-// })
+const initialTodos = [
+    {
+        id: 1,
+        text: '프로젝트 생성하기',
+        done: true
+      },
+      {
+        id: 2,
+        text: '컴포넌트 스타일링하기',
+        done: true
+      },
+      {
+        id: 3,
+        text: 'Context 만들기',
+        done: false
+      },
+      {
+        id: 4,
+        text: '기능 구현하기',
+        done: false
+      }
+];
 
 app.post('/info',(req,res)=>{
     const info = req.body.id;
     console.log('id: ',info);
     // console.log(password);
+});
+
+app.post('/todos',(req,res)=>{
+    const data = req.body;
+    console.log(data);
+    
+    switch(data.action){
+        case 'FETCH':
+            res.send(initialTodos);
+            console.log('fetch ', initialTodos);
+    }
+    // console.log(password);
+});
+
+app.get('/todos', (req, res)=>{
+    res.send(initialTodos);
+    console.log('send ', initialTodos);
 });
 
 app.listen(port, () => {

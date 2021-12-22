@@ -1,27 +1,50 @@
-import React, {useReducer, createContext, useContext, useRef} from 'react';
+import axios from 'axios';
+import React, {useReducer, createContext, useContext, useRef, useState} from 'react';
 
-const initialTodos = [
-    {
-        id: 1,
-        text: '프로젝트 생성하기',
-        done: true
-      },
-      {
-        id: 2,
-        text: '컴포넌트 스타일링하기',
-        done: true
-      },
-      {
-        id: 3,
-        text: 'Context 만들기',
-        done: false
-      },
-      {
-        id: 4,
-        text: '기능 구현하기',
-        done: false
-      }
-];
+// server.js로 이동
+// const initialTodos = [
+//     {
+//         id: 1,
+//         text: '프로젝트 생성하기',
+//         done: true
+//       },
+//       {
+//         id: 2,
+//         text: '컴포넌트 스타일링하기',
+//         done: true
+//       },
+//       {
+//         id: 3,
+//         text: 'Context 만들기',
+//         done: false
+//       },
+//       {
+//         id: 4,
+//         text: '기능 구현하기',
+//         done: false
+//       }
+// ];
+
+async function fetchInitialTodos() {
+    // const response = axios({
+    //     url: 'http://localhost:3001/todos',
+    //     method: 'post',
+    //     data:{
+    //         action: 'FETCH',
+    //         todos: []
+    //     }
+    // });
+    // console.log('fetched: ', response.data.todos);
+    // return response.data.todos;
+    await axios.get('http://localhost:3001/todos')
+    .then((res)=>{
+        console.log('fetchInitialTodos: ', res.data);
+        return res.data;
+    })
+    .catch((error)=>{
+        console.log(error);
+    })
+};
 
 // state: Todos 배열
 function todoReducer(state, action){ 
@@ -46,7 +69,21 @@ const TodoNextIdContext = createContext();
 
 // 상태 관리 컴포넌트 내보내기
 export function TodoProvider({children}){ 
-    const [state, dispatch] = useReducer(todoReducer, initialTodos);
+    const initialTodos = fetchInitialTodos();
+    // const [initialTodos, setInitialTodos] = useState([]);
+    // axios.get('http://localhost:3001/todos')
+    // .then((res)=>{
+    //     // console.log('get: ', res.data);
+    //     setInitialTodos(res.data);
+    // })
+    // .catch((error)=>{
+    //     console.log(error);
+    // })
+
+    const [state, dispatch] = useReducer(todoReducer, []);
+    console.log('state: ', state);//dbg
+    console.log('initialTodos: ', initialTodos);
+
     const nextID = useRef(5);
 
     return (
