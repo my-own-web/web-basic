@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { darken, lighten } from 'polished';
 import { infos } from './LoginContext';
@@ -63,6 +63,14 @@ function LoginPage() {
     
     // wrong: true->invalid ID/PASSWORD
     const [wrong, setWrong] = useState(false);
+    const [valid, setValid] = useState(false);
+    useEffect(()=>{
+        if(valid){
+            navigate("/todolist");
+            console.log('valid: true');
+        }
+        else console.log('valid: false');
+    }, [valid]);
 
     const onChange = (e) => {
         const { value, name } = e.target;
@@ -73,41 +81,33 @@ function LoginPage() {
     };
 
     // express에 데이터 보내기. onSubmit에서 호출
-    const fetchInfo = async() =>{
+    const fetchValid = async() =>{
         const response = await axios({
             url: 'http://localhost:3001/info',
             method: 'post',
             data: {
-                id: inputs.id
+                id: inputs.id,
+                password: inputs.password
+            }
+        })
+        .then((res)=>{
+            setValid(res.data);
+            if(res.data){
+                setWrong(false);
+            }
+            else{
+                setInputs({ id: '', password: '' });
+                setWrong(true);
             }
         });
-        console.log(response.data);
-        console.log('post check');
+        
     };
-
-    // infos 배열에 id, password가 존재하면 true
-    // 없으면 false 반환
-    const isValid = ({ id, password }) => {
-        const index = infos.find((element) => element.id === id);
-        if (index && index.password === password) return true;
-        else return false;
-    };
-
 
     // 로그인 버튼 누르면 그때까지 입력받은 id, password를 제출, validity check
     const onSubmit = () => {
         setSubmits({ id: inputs.id, password: inputs.password });
 
-        fetchInfo();
-
-        if (isValid(inputs)) { // 투두리스트 페이지로 이동
-            setWrong(false);
-            navigate("/todolist");
-        }
-        else {
-            setInputs({ id: '', password: '' });
-            setWrong(true);
-        }
+        fetchValid();        
     };
 
     const onInputKeyPress = (e) => {

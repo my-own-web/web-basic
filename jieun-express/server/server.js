@@ -1,4 +1,5 @@
 const express = require('express');
+const router = express.Router();
 const app = express();
 const port = 3001;
 const cors = require('cors');
@@ -32,16 +33,43 @@ const todos = [
     }
 ];
 
+const infos = [{
+  id: 'id',
+  password: 'password',
+  login: false
+},
+{
+  id: 'jieun',
+  password: 'kwon',
+  login: false
+},
+{
+  id: 'a',
+  password: 'b',
+  login: false
+}];
+
 app.post('/info',(req,res)=>{
-    const info = req.body.id;
-    console.log('id: ',info);
-    // console.log(password);
+    console.log('req.body: ', req.body);
+
+    // infos 배열에 id, password가 존재하면 true
+    // 없으면 false 반환
+      const index = infos.find((element) => element.id === req.body.id);
+      if (index && index.password === req.body.password) {
+        res.send(true);
+        console.log('valid: true');
+      }
+      else {
+        res.send(false);
+        console.log('valid: false');
+      }
+
 });
 
-app.post('/todos/post',(req,res)=>{
+app.post('/todos',(req,res)=>{
     const data = req.body;
     console.log('post', data);
-    res.send('post succeed');
+    res.send(data.newTodos);
     
     // switch(data.action){
     //     case 'FETCH':
