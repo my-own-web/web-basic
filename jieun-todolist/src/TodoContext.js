@@ -5,7 +5,7 @@ async function sendTodos (todos) {
     console.log('post', todos);
 
     await axios({
-        url: 'http://localhost:3001/todos/post',
+        url: 'http://localhost:3001/todos',
         method: 'post',
         data: {
             newTodos: todos
