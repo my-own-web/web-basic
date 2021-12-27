@@ -5,6 +5,8 @@ import TodoList from './todolist/TodoList';
 import TodoCreate from './todolist/TodoCreate';
 import { TodoProvider } from './TodoContext';
 import {createGlobalStyle} from 'styled-components';
+import axios from 'axios';
+
 // createGlobalStyle: 글로벌 스타일
 
 const GlobalStyle = createGlobalStyle`
