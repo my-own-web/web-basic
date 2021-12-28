@@ -39,7 +39,7 @@ function todoListDBConnection(){
 
 
 
-app.get("/", async (req, res)=>{
+app.get("/todoall", async (req, res)=>{
   const pool=todoListDBConnection();
   //console.log("풀 받아옴");
   const conn=await pool.getConnection();
@@ -56,6 +56,40 @@ app.get("/", async (req, res)=>{
     conn.release();
   }
 })
+
+app.post("/todocreate", async (req, res)=>{
+  const data=req.body;
+  console.log(data);
+  const pool=todoListDBConnection();
+  const conn=await pool.getConnection();
+
+  try{
+    await conn.query("insert into todolist (text, done, editing) values(?,?,?)", data.text, data.done, data.editing);
+  }
+  catch(err){
+    throw err;
+  }
+  finally {
+    conn.release();
+  }
+});
+
+app.post("/todotoggle", async (req, res)=>{
+  const reqid=req.body;
+  console.log(reqid);
+  const pool=todoListDBConnection();
+  const conn=await pool.getConnection();
+
+  try{
+    await conn.query("update todolist set done=1-done where id=?", reqid);
+  }
+  catch(err){
+    throw err;
+  }
+  finally {
+    conn.release();
+  }
+});
 
 app.listen(port, (req, res)=>{
   console.log(`server port 8000`);

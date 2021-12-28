@@ -1,40 +1,29 @@
 import React, {useReducer, createContext, useContext, useRef, useEffect, useState} from "react";
 import axios from "axios";
 
-const initialTodos=[
-  {
-    id:1,
-    text:'프로젝트 생성하기',
-    done:true,
-    editing:false
-  },
-  {
-    id: 2,
-    text: '컴포넌트 스타일링하기',
-    done: true,
-    editing:false
-  },
-  {
-    id: 3,
-    text: 'Context 만들기',
-    done: false,
-    editing:false
-  },
-  {
-    id: 4,
-    text: '기능 구현하기',
-    done: false,
-    editing:false
+async function updateServerTodoList(actionType, data){
+  switch(actionType){
+    case 'CREATE':
+      await axios.post("http://localhost:8000/todocreate", data);
+      return;
+    case 'TOGGLE':
+      console.log(data);
+      await axios.post("http://localhost:8000/todotoggle", data);
+      return;
   }
-]
+}
 
 const todoListReducer=(state, action)=>{
   switch(action.type){
     case 'INIT':
       return action.data;
     case 'CREATE':
+      updateServerTodoList(action.type, action.todo);
+      //새로운 투두리스트 데이터를 추가한다
+      //updateServerTodoList의 인자로 추가할 데이터 하나를 받음
       return state.concat(action.todo);
     case 'TOGGLE':
+      updateServerTodoList(action.type, action.id);
       return state.map(todo=>(
         todo.id===action.id?{...todo, done:!todo.done}: todo
       ));
@@ -60,7 +49,7 @@ const TodoListProvider=({children})=>{
 
   async function fetchInitialTodoList(){
     try{
-      const {data}=await axios.get("http://localhost:8000/");
+      const {data}=await axios.get("http://localhost:8000/todoall");
       setTodos(data);
       console.log(data);
     }

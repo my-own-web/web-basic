@@ -4,10 +4,7 @@
     <list default="true" id="9edecb95-6ea1-400a-ad1c-b3bad67596b0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/TodoListContext.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/TodoListContext.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/server/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/server/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +54,7 @@
       <workItem from="1640567897074" duration="6759000" />
       <workItem from="1640591604982" duration="12635000" />
       <workItem from="1640687766030" duration="607000" />
-      <workItem from="1640696576481" duration="7211000" />
+      <workItem from="1640696576481" duration="11056000" />
     </task>
     <servers />
   </component>
