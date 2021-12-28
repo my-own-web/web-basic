@@ -1,4 +1,5 @@
-import React, {useReducer, createContext, useContext, useRef} from "react";
+import React, {useReducer, createContext, useContext, useRef, useEffect, useState} from "react";
+import axios from "axios";
 
 const initialTodos=[
   {
@@ -29,6 +30,8 @@ const initialTodos=[
 
 const todoListReducer=(state, action)=>{
   switch(action.type){
+    case 'INIT':
+      return action.data;
     case 'CREATE':
       return state.concat(action.todo);
     case 'TOGGLE':
@@ -51,8 +54,28 @@ const TodoListDispatchContext=createContext();
 const TodoListNextIdContext=createContext();
 
 const TodoListProvider=({children})=>{
-  const [state, dispatch]=useReducer(todoListReducer, initialTodos);
+  const [todos, setTodos]=useState([]);
+  const [state, dispatch]=useReducer(todoListReducer, []);
   const nextId=useRef(5);
+
+  async function fetchInitialTodoList(){
+    try{
+      const {data}=await axios.get("http://localhost:8000/");
+      setTodos(data);
+      console.log(data);
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
+
+  useEffect(()=>{
+    fetchInitialTodoList();
+  }, []);
+
+  useEffect(()=>{
+    dispatch({type:"INIT", data:todos});
+  }, [todos]);
 
   return (
     /* state를 쓰는 컨텍스트와 dispatch를 쓰는 컨텍스트를 분리 */
