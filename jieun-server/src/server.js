@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(bodyParser.json());
 
-const todos = [
+let todos = [
   {
       id: 1,
       text: '프로젝트 생성하기',
@@ -68,8 +68,9 @@ app.post('/info',(req,res)=>{
 
 app.post('/todos',(req,res)=>{
     const data = req.body;
+    todos = data;
     console.log('post', data);
-    res.send(data.newTodos);
+    // res.send(data.newTodos);
     
     // switch(data.action){
     //     case 'FETCH':
