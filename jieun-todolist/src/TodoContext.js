@@ -1,35 +1,40 @@
 import axios from 'axios';
 import React, {useReducer, createContext, useContext, useRef, useState, useEffect} from 'react';
 
-async function sendTodos (todos) {
-    console.log('post', todos);
+async function postTodos (action) {
+    // console.log('post', todos);
 
-    await axios({
-        url: 'http://localhost:3001/todos',
-        method: 'post',
-        data: {
-            newTodos: todos
-        }
-    });
+    try{
+    await axios.post('http://localhost:3001/todos', action);
+    } catch(error){
+        console.log(error);
+    }
 }
 
 // state: Todos 배열
 function todoReducer(state, action){ 
+    let newTodos;
     switch(action.type){
         case 'SET':
             console.log('setting newTodos'); // dbg
             return action.newTodos;
         case 'CREATE':
-            return state.concat(action.todo)
+            newTodos=state.concat(action.todo);
+            break;
         case 'TOGGLE':
-            return state.map(todo => todo.id === action.id? {...todo, done: !todo.done} : todo )
+            newTodos=state.map(todo => todo.id === action.id? {...todo, done: !todo.done} : todo );
+            break;
         case 'REMOVE':
-            return state.filter(todo => todo.id !== action.id)
+            newTodos=state.filter(todo => todo.id !== action.id);
+            break;
         case 'EDIT':
-            return state.map(todo => todo.id===action.id?{...todo, text: action.text} : todo)
+            newTodos=state.map(todo => todo.id===action.id?{...todo, text: action.text} : todo);
+            break;
         default:
             throw new Error(`Unhandled action type: ${action.type}`);
     }
+    postTodos(action);
+    return newTodos;
 }
 
 // state, dispatch 각각 다른 Context에 넣음. dispatch만 필요한 컴포넌트에서 불필요한 렌더링 방지 위함.
@@ -59,13 +64,6 @@ export function TodoProvider({children}){
     useEffect(()=>{
         fetchInitialTodos();
     },[]);
-
-    const [idx, setIdx] = useState(1); //dbg
-    useEffect(()=>{
-        console.log(idx, 'state: ', state);
-        setIdx(idx+1);// dbg
-        sendTodos(state);
-    }, [state]);
 
     const nextID = useRef(5);
 

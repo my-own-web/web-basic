@@ -62,22 +62,68 @@ app.post('/info',(req,res)=>{
 
 });
 
-app.post('/todos',(req,res)=>{
-    const data = req.body;
-    todos = data;
-    console.log('post', data);
+app.post('/todos',async (req,res)=>{
+    const action = req.body;
+    console.log('post', action);
+
+    const pool = DB_Connection();
+  const conn = await pool.getConnection();
+
+    switch(action.type){
+      case 'CREATE':
+          try{
+            const [rows] = await conn.query(`INSERT INTO todos VALUES (${action.todo.id}, '${action.todo.text}', ${action.todo.done})`); // insert variable
+            } catch(error){
+              console.log(error);
+            } finally{
+              conn.release();
+            }
+          break;
+      case 'TOGGLE':
+          newTodos=state.map(todo => todo.id === action.id? {...todo, done: !todo.done} : todo );
+          try{
+            const [rows] = await conn.query('SELECT * FROM todos'); // chk table name
+            todos = rows;
+            res.send(todos);
+            } catch(error){
+              console.log(error);
+            } finally{
+              conn.release();
+            }
+          break;
+      case 'REMOVE':
+          newTodos=state.filter(todo => todo.id !== action.id);
+          try{
+            const [rows] = await conn.query('SELECT * FROM todos'); // chk table name
+            todos = rows;
+            res.send(todos);
+            } catch(error){
+              console.log(error);
+            } finally{
+              conn.release();
+            }
+          break;
+      case 'EDIT':
+          newTodos=state.map(todo => todo.id===action.id?{...todo, text: action.text} : todo);
+          try{
+            const [rows] = await conn.query('SELECT * FROM todos'); // chk table name
+            todos = rows;
+            res.send(todos);
+            } catch(error){
+              console.log(error);
+            } finally{
+              conn.release();
+            }
+          break;
+      default:
+        conn.release(); // chk: needed?
+          throw new Error(`Unhandled action type: ${action.type}`);
+  }
 });
 
 app.get('/todos', async (req, res)=>{
   const pool = DB_Connection();
   const conn = await pool.getConnection();
-
-  // try{
-  // const conn = await pool.getConnections();
-  // }
-  // catch(error){
-  //   console.log(error);
-  // }
 
   try{
   const [rows] = await conn.query('SELECT * FROM todos'); // chk table name
