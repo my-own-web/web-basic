@@ -10,28 +10,24 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(bodyParser.json());
 
-let todos = [
-  {
-      id: 1,
-      text: '프로젝트 생성하기',
-      done: true
-    },
-    {
-      id: 2,
-      text: '컴포넌트 스타일링하기',
-      done: true
-    },
-    {
-      id: 3,
-      text: 'Context 만들기',
-      done: false
-    },
-    {
-      id: 4,
-      text: '기능 구현하기',
-      done: false
-    }
-];
+const mysql = require('mysql2/promise');
+const dotenv = require('dotenv').config();
+
+const options = {
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE
+}
+
+let globalPool;
+function DB_Connection(){
+  if(globalPool) return globalPool;
+  globalPool = mysql.createPool(options);
+  return globalPool;
+}
+
+let todo;
 
 const infos = [{
   id: 'id',
@@ -70,19 +66,31 @@ app.post('/todos',(req,res)=>{
     const data = req.body;
     todos = data;
     console.log('post', data);
-    // res.send(data.newTodos);
-    
-    // switch(data.action){
-    //     case 'FETCH':
-    //         res.send(initialTodos);
-    //         console.log('fetch ', initialTodos);
-    // }
-    // console.log(password);
 });
 
-app.get('/todos', (req, res)=>{
-    res.send(todos);
-    console.log('send ', todos);
+app.get('/todos', async (req, res)=>{
+  const pool = DB_Connection();
+  const conn = await pool.getConnection();
+
+  // try{
+  // const conn = await pool.getConnections();
+  // }
+  // catch(error){
+  //   console.log(error);
+  // }
+
+  try{
+  const [rows] = await conn.query('SELECT * FROM todos'); // chk table name
+  todos = rows;
+  res.send(todos);
+  } catch(error){
+    console.log(error);
+  } finally{
+    conn.release();
+  }
+
+  // res.send(todos);
+  // console.log('send ', todos);
 });
 
 app.listen(port, () => {
