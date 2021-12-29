@@ -60,6 +60,7 @@ function LoginPage() {
         password: ''
     });
     
+    // NOTwrong != valid, NOTvalid != wrong
     // wrong: true->invalid ID/PASSWORD
     const [wrong, setWrong] = useState(false);
     const [valid, setValid] = useState(false);
