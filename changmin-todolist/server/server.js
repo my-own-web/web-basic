@@ -4,52 +4,44 @@ const port = 3001;
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-let todoList = [
-  {
-    id: 0,
-    text: "투두리스트 틀 만들기",
-    done: true,
-    edit: false,
-  },
-  {
-    id: 1,
-    text: "투두리스트 기능 구현하기",
-    done: true,
-    edit: false,
-  },
-  {
-    id: 2,
-    text: "로그인 구현하기",
-    done: false,
-    edit: false,
-  },
-  {
-    id: 3,
-    text: "투두리스트 수정기능 만들기",
-    done: true,
-    edit: false,
-  },
-  {
-    id: 4,
-    text: "서버와 연결하기",
-    done: false,
-    edit: false,
-  },
-];
+const mysql = require("mysql2/promise");
+const dotenv = require("dotenv").config();
+const options = {
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
+  connectionLimit: 400,
+};
+let globalPool;
+function connectDB() {
+  if (!globalPool) {
+    globalPool = mysql.createPool(options);
+  }
+  return globalPool;
+}
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(bodyParser.json());
 
-app.post("/api/todo", (req, res) => {
-  switch (req.body.type) {
-    case "GET":
-      res.send(todoList);
-      break;
-    case "SET":
-      todoList = req.body.todo;
-      break;
+app.get("/api/todo", async (req, res) => {
+  const pool = connectDB();
+  const conn = await pool.getConnection();
+  try {
+    const [rows] = await conn.query("SELECT * FROM todo");
+    console.log(rows);
+    res.send(rows);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    conn.release();
   }
+});
+
+app.post("/api/todo", (req, res) => {
+  todoList = req.body.todo;
+  console.log(todoList);
 });
 
 app.listen(port, () => {
