@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { darken, lighten } from 'polished';
-import { infos } from './LoginContext';
 import { useNavigate } from 'react-router-dom';
 import Popup from './login/Popup';
 import axios from 'axios';
@@ -99,6 +98,9 @@ function LoginPage() {
                 setInputs({ id: '', password: '' });
                 setWrong(true);
             }
+        })
+        .catch((error)=>{
+            console.log(error);
         });
         
     };
@@ -146,8 +148,10 @@ function LoginPage() {
                 </p>
 
                 <p style={{ color: "blue" }}>
-                    <div><b>infos 배열: id password</b></div>
-                    {infos.map(info => <div>{info.id} {info.password}</div>)}
+                    <div><b>valid id password</b></div>
+                    <div>id password</div>
+                    <div>jieun kwon</div>
+                    <div>a b</div>
                 </p>
             </div>
         </>
