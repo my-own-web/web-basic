@@ -2,8 +2,6 @@ import axios from 'axios';
 import React, {useReducer, createContext, useContext, useRef, useState, useEffect} from 'react';
 
 async function postTodos (action) {
-    // console.log('post', todos);
-
     try{
     await axios.post('http://localhost:3001/todos', action);
     } catch(error){
@@ -45,19 +43,21 @@ const TodoNextIdContext = createContext();
 // 상태 관리 컴포넌트 내보내기
 export function TodoProvider({children}){ 
     const [state, dispatch] = useReducer(todoReducer, []);
+    const nextID = useRef(0);
     
     async function fetchInitialTodos() {
-        await axios.get('http://localhost:3001/todos')
-        .then((res)=>{
-            console.log('fetchInitialTodos: ', res.data);
+        try {
+            const {data} = await axios.get('http://localhost:3001/todos');
             dispatch({
                 type: 'SET',
-                newTodos: res.data
+                newTodos: data.todos
             });
-        })
-        .catch((error)=>{
+            nextID.current = data.nextID;
+            console.log('fetchInitialTodos: ', data.todos, nextID);
+
+        } catch (error) {
             console.log(error);
-        })
+        }
     };
 
     // 한 번만 실행 -> 첫 렌더링에서만 실행(+f5)
@@ -65,7 +65,6 @@ export function TodoProvider({children}){
         fetchInitialTodos();
     },[]);
 
-    const nextID = useRef(5);
 
     return (
         <TodoStateContext.Provider value={state}>
