@@ -1,55 +1,47 @@
-import React, { createContext, useContext, useReducer, useRef } from "react";
+import axios from "axios";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+} from "react";
 
-const initialTodos = [
-  {
-    id: 0,
-    text: "투두리스트 틀 만들기",
-    done: true,
-    edit: false,
-  },
-  {
-    id: 1,
-    text: "투두리스트 기능 구현하기",
-    done: true,
-    edit: false,
-  },
-  {
-    id: 2,
-    text: "로그인 구현하기",
-    done: false,
-    edit: false,
-  },
-  {
-    id: 3,
-    text: "투두리스트 수정기능 만들기",
-    done: true,
-    edit: false,
-  },
-  {
-    id: 4,
-    text: "서버와 연결하기",
-    done: false,
-    edit: false,
-  },
-];
+const todoList = [];
 
 function todoReducer(state, action) {
+  let newState;
   switch (action.type) {
+    case "INIT":
+      newState = action.todo;
+      break;
     case "CREATE":
-      return state.concat(action.todo);
+      newState = state.concat(action.todo);
+      break;
     case "TOGGLE":
-      return state.map((todo) =>
+      newState = state.map((todo) =>
         todo.id === action.id ? { ...todo, done: !todo.done } : todo
       );
+      break;
     case "REMOVE":
-      return state.filter((todo) => todo.id !== action.id);
+      newState = state.filter((todo) => todo.id !== action.id);
+      break;
     case "EDIT":
-      return state.map((todo) =>
+      newState = state.map((todo) =>
         todo.id === action.id ? { ...todo, text: action.editText } : todo
       );
+      break;
     default:
       throw new Error(`Undefined Action: ${action.type}`);
   }
+  async function sendTodo() {
+    await axios.post("http://localhost:3001/api/todo", {
+      type: "SET",
+      todo: newState,
+    });
+  }
+  sendTodo();
+  return newState;
 }
 
 const TodoStateContext = createContext();
@@ -57,8 +49,20 @@ const TodoDispatchContext = createContext();
 const TodoNextIdContext = createContext();
 
 export function TodoProvider({ children }) {
-  const [state, dispatch] = useReducer(todoReducer, initialTodos);
-  const nextId = useRef(initialTodos.length);
+  const [state, dispatch] = useReducer(todoReducer, todoList);
+
+  useEffect(() => {
+    async function getInitialTodo() {
+      await axios
+        .post("http://localhost:3001/api/todo", { type: "GET" })
+        .then((res) => {
+          dispatch({ type: "INIT", todo: res.data });
+        });
+    }
+    getInitialTodo();
+  }, []);
+
+  const nextId = useRef(todoList.length);
 
   return (
     <TodoStateContext.Provider value={state}>
