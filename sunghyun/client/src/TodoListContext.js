@@ -1,10 +1,23 @@
 import React, {useReducer, createContext, useContext, useRef, useEffect, useState} from "react";
 import axios from "axios";
 
+async function fetchServerTodoList(){
+  try{
+    const {data}=await axios.get("http://localhost:8000/todoall");
+    console.log(data);
+    return data;
+    //받아온 데이터를 리턴해 준다
+  }
+  catch(err){
+    console.log(err);
+  }
+}
+
 async function updateServerTodoList(actionType, data){
   switch(actionType){
     case 'CREATE':
       await axios.post("http://localhost:8000/todocreate", data);
+      //새로 추가할 데이터를 전송한다
       return;
     case 'TOGGLE':
       console.log(data);
@@ -21,7 +34,7 @@ const todoListReducer=(state, action)=>{
       updateServerTodoList(action.type, action.todo);
       //새로운 투두리스트 데이터를 추가한다
       //updateServerTodoList의 인자로 추가할 데이터 하나를 받음
-      return state.concat(action.todo);
+      return fetchServerTodoList();
     case 'TOGGLE':
       updateServerTodoList(action.type, action.id);
       return state.map(todo=>(
@@ -47,7 +60,7 @@ const TodoListProvider=({children})=>{
   const [state, dispatch]=useReducer(todoListReducer, []);
   const nextId=useRef(5);
 
-  async function fetchInitialTodoList(){
+  async function fetchServerTodoList(){
     try{
       const {data}=await axios.get("http://localhost:8000/todoall");
       setTodos(data);
@@ -59,11 +72,11 @@ const TodoListProvider=({children})=>{
   }
 
   useEffect(()=>{
-    fetchInitialTodoList();
+    fetchServerTodoList();
   }, []);
 
   useEffect(()=>{
-    dispatch({type:"INIT", data:todos});
+    dispatch({type:'INIT', data:todos});
   }, [todos]);
 
   return (

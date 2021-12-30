@@ -27,6 +27,7 @@ const TodoListHeaderBlock=styled.div`
 
 const TodoListHeader=()=>{
   const todos=useTodoListState();
+  //console.log(todos);
   const undoneTasks=todos.filter(todo=>!todo.done);
 
   const today=new Date();
