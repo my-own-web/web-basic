@@ -4,7 +4,6 @@ import React from "react";
 import styled from "styled-components";
 import LoginButton from "./LoginButton";
 import {useState} from "react";
-import axios from 'axios';
 
 const userInfo=[
   {
