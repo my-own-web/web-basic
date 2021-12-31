@@ -39,7 +39,7 @@ function todoListDBConnection(){
 
 
 
-app.get("/todoall", async (req, res)=>{
+app.get("/todo/all", async (req, res)=>{
   const pool=todoListDBConnection();
   //console.log("풀 받아옴");
   const conn=await pool.getConnection();
@@ -57,9 +57,9 @@ app.get("/todoall", async (req, res)=>{
   }
 })
 
-app.post("/todocreate", async (req, res)=>{
+app.post("/todo/create", async (req, res)=>{
   const data=req.body;
-  console.log(data);
+  console.log("서버에 보내진 데이터 ",data);
   const pool=todoListDBConnection();
   const conn=await pool.getConnection();
 
@@ -74,7 +74,7 @@ app.post("/todocreate", async (req, res)=>{
   }
 });
 
-app.post("/todotoggle", async (req, res)=>{
+app.post("/todo/toggle", async (req, res)=>{
   const reqid=req.body;
   console.log(reqid);
   const pool=todoListDBConnection();

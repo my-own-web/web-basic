@@ -2,41 +2,41 @@ import React, {useReducer, createContext, useContext, useRef, useEffect, useStat
 import axios from "axios";
 
 async function fetchServerTodoList(){
+  //서버에서 데이터 받아 오기
   try{
-    const {data}=await axios.get("http://localhost:8000/todoall");
+    const {data}=await axios.get("http://localhost:8000/todo/all");
     console.log(data);
     return data;
-    //받아온 데이터를 리턴해 준다
   }
   catch(err){
     console.log(err);
   }
 }
 
-async function updateServerTodoList(actionType, data){
+async function updateServerTodoList(actionType, updateData){
   switch(actionType){
     case 'CREATE':
-      await axios.post("http://localhost:8000/todocreate", data);
+      await axios.post("http://localhost:8000/todo/create", updateData);
       //새로 추가할 데이터를 전송한다
-      return;
-    case 'TOGGLE':
+      const {data}=await axios.get("http://localhost:8000/todo/all");
       console.log(data);
-      await axios.post("http://localhost:8000/todotoggle", data);
+      return data;
+    case 'TOGGLE':
+      await axios.post("http://localhost:8000/todo/toggle", updateData);
       return;
   }
 }
 
 const todoListReducer=(state, action)=>{
   switch(action.type){
-    case 'INIT':
+    case 'UPDATE':
       return action.data;
     case 'CREATE':
-      updateServerTodoList(action.type, action.todo);
-      //새로운 투두리스트 데이터를 추가한다
-      //updateServerTodoList의 인자로 추가할 데이터 하나를 받음
-      return fetchServerTodoList();
+      console.log(action.todo);
+      const concatData=updateServerTodoList('CREATE', action.todo);
+      return concatData;
     case 'TOGGLE':
-      updateServerTodoList(action.type, action.id);
+      //updateServerTodoList(action.type, action.id);
       return state.map(todo=>(
         todo.id===action.id?{...todo, done:!todo.done}: todo
       ));
@@ -58,13 +58,13 @@ const TodoListNextIdContext=createContext();
 const TodoListProvider=({children})=>{
   const [todos, setTodos]=useState([]);
   const [state, dispatch]=useReducer(todoListReducer, []);
-  const nextId=useRef(5);
+  const nextId=useRef(7);
 
-  async function fetchServerTodoList(){
+  async function updateTodoListFromServerData(){
     try{
-      const {data}=await axios.get("http://localhost:8000/todoall");
+      const data=await fetchServerTodoList();
+      //서버에서 데이터를 받아 온다.
       setTodos(data);
-      console.log(data);
     }
     catch(err){
       console.log(err);
@@ -72,11 +72,11 @@ const TodoListProvider=({children})=>{
   }
 
   useEffect(()=>{
-    fetchServerTodoList();
+    updateTodoListFromServerData();
   }, []);
 
   useEffect(()=>{
-    dispatch({type:'INIT', data:todos});
+    dispatch({type:'UPDATE', data:todos});
   }, [todos]);
 
   return (
@@ -94,7 +94,7 @@ const TodoListProvider=({children})=>{
 const useTodoListState=()=>{
   const context=useContext(TodoListStateContext);
   if(!context){
-    throw new Error('Cannot find TodoProvider');
+    throw new Error('Cannot find TodoList State Provider');
   }
   return context;
 }
@@ -102,7 +102,7 @@ const useTodoListState=()=>{
 const useTodoListDispatch=()=>{
   const context=useContext(TodoListDispatchContext);
   if(!context){
-    throw new Error('Cannot find TodoProvider');
+    throw new Error('Cannot find TodoList Dispatch Provider');
   }
   return context;
 }
@@ -110,7 +110,7 @@ const useTodoListDispatch=()=>{
 const useTodoListNextId=()=>{
   const context=useContext(TodoListNextIdContext);
   if(!context){
-    throw new Error('Cannot find TodoProvider');
+    throw new Error('Cannot find TodoList nextID Provider');
   }
   return context;
 }

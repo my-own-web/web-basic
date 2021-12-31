@@ -77,7 +77,7 @@ const TodoListItem=({id, done, text, editing})=>{
   return (
     <TodoListItemBlock>
       <CheckCircle done={done} onClick={onToggle}>
-        {done && <MdDone />}
+        {done ? <MdDone />:''}
       </CheckCircle>
       <Text contentEditable={editing} done={done}>{text}</Text>
       <EditButton onClick={onEdit}>

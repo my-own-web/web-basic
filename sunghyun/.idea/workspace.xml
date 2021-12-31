@@ -7,7 +7,8 @@
     <list default="true" id="9edecb95-6ea1-400a-ad1c-b3bad67596b0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/TodoListContext.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/TodoListContext.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/TodoListHeader.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/TodoListHeader.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/TodoListItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/TodoListItem.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,6 +70,10 @@
       <workItem from="1640696576481" duration="11056000" />
       <workItem from="1640846304112" duration="19000" />
       <workItem from="1640846338646" duration="5600000" />
+      <workItem from="1640867005125" duration="4754000" />
+      <workItem from="1640911134987" duration="1908000" />
+      <workItem from="1640925981814" duration="4869000" />
+      <workItem from="1640945868871" duration="1069000" />
     </task>
     <servers />
   </component>
@@ -85,5 +90,6 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
