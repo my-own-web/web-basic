@@ -1,45 +1,166 @@
 import React, {useReducer, createContext, useContext, useRef, useEffect, useState} from "react";
 import axios from "axios";
+import useAsync from "./components/useAsync";
 
-async function fetchServerTodoList(){
-  //서버에서 데이터 받아 오기
-  try{
-    const {data}=await axios.get("http://localhost:8000/todo/all");
-    console.log(data);
-    return data;
-  }
-  catch(err){
-    console.log(err);
+function serverFetchReducer(state, action){
+  // 서버에 한 요청이 어떤 상태인지를 나타낸다
+  switch (action.type) {
+    case 'LOADING':
+      return {
+        loading: true,
+        data: null,
+        error: null
+      };
+    case 'SUCCESS':
+      return {
+        loading: false,
+        data: action.data,
+        //새로운 데이터
+        error: null
+      };
+    case 'ERROR':
+      return {
+        loading: false,
+        data: null,
+        error: action.error
+      };
+    default:
+      throw new Error(`Unhandled action type: ${action.type}`);
   }
 }
 
-async function updateServerTodoList(actionType, updateData){
-  switch(actionType){
-    case 'CREATE':
-      await axios.post("http://localhost:8000/todo/create", updateData);
-      //새로 추가할 데이터를 전송한다
-      const {data}=await axios.get("http://localhost:8000/todo/all");
-      console.log(data);
-      return data;
-    case 'TOGGLE':
-      await axios.post("http://localhost:8000/todo/toggle", updateData);
-      return;
+function serverCreateReducer(state, action){
+  // 서버에 한 요청이 어떤 상태인지를 나타낸다
+  switch (action.type) {
+    case 'LOADING':
+      return {
+        loading: true,
+        data: null,
+        error: null
+      };
+    case 'SUCCESS':
+      return {
+        loading: false,
+        data: action.data,
+        //새로운 데이터
+        error: null
+      };
+    case 'ERROR':
+      return {
+        loading: false,
+        data: null,
+        error: action.error
+      };
+    default:
+      throw new Error(`Unhandled action type: ${action.type}`);
   }
 }
 
-const todoListReducer=(state, action)=>{
+function serverToggleReducer(state, action){
+  // 서버에 한 요청이 어떤 상태인지를 나타낸다
+  switch (action.type) {
+    case 'LOADING':
+      return {
+        loading: true,
+        data: null,
+        error: null
+      };
+    case 'SUCCESS':
+      return {
+        loading: false,
+        data: action.data,
+        //새로운 데이터
+        error: null
+      };
+    case 'ERROR':
+      return {
+        loading: false,
+        data: null,
+        error: action.error
+      };
+    default:
+      throw new Error(`Unhandled action type: ${action.type}`);
+  }
+}
+
+function serverRemoveReducer(state, action){
+  // 서버에 한 요청이 어떤 상태인지를 나타낸다
+  switch (action.type) {
+    case 'LOADING':
+      return {
+        loading: true,
+        data: null,
+        error: null
+      };
+    case 'SUCCESS':
+      return {
+        loading: false,
+        data: action.data,
+        //새로운 데이터
+        error: null
+      };
+    case 'ERROR':
+      return {
+        loading: false,
+        data: null,
+        error: action.error
+      };
+    default:
+      throw new Error(`Unhandled action type: ${action.type}`);
+  }
+}
+
+function serverEditReducer(state, action){
+  // 서버에 한 요청이 어떤 상태인지를 나타낸다
+  switch (action.type) {
+    case 'LOADING':
+      return {
+        loading: true,
+        data: null,
+        error: null
+      };
+    case 'SUCCESS':
+      return {
+        loading: false,
+        data: action.data,
+        //새로운 데이터
+        error: null
+      };
+    case 'ERROR':
+      return {
+        loading: false,
+        data: null,
+        error: action.error
+      };
+    default:
+      throw new Error(`Unhandled action type: ${action.type}`);
+  }
+}
+
+/*function todoListReducer(state, action){
   switch(action.type){
     case 'UPDATE':
-      return action.data;
+      const [fetchState, fetchDispatch]=useAsync(
+        axios.get("http://localhost:8000/todo/all"),
+        [],
+        serverCreateReducer
+      );
+      return fetchState.data;
     case 'CREATE':
-      console.log(action.todo);
-      const concatData=updateServerTodoList('CREATE', action.todo);
-      return concatData;
+      const [createState, createDispatch]=useAsync(
+        axios.post("http://localhost:8000/todo/create", action.todo),
+        [],
+        serverCreateReducer
+      );
+      return createState.data;
     case 'TOGGLE':
+      const [toggleState, toggleDispatch]=useAsync(
+        axios.post("http://localhost:8000/todo/toggle", action.id),
+        [],
+        serverCreateReducer
+      );
       //updateServerTodoList(action.type, action.id);
-      return state.map(todo=>(
-        todo.id===action.id?{...todo, done:!todo.done}: todo
-      ));
+      return toggleState.data;
     case 'REMOVE':
       return state.filter(todo=>todo.id!==action.id);
     case 'EDIT':
@@ -49,9 +170,9 @@ const todoListReducer=(state, action)=>{
     default:
       throw new Error(`unhandled action type : ${action.type}`);
   }
-}
+}*/
 
-const TodoListStateContext=createContext();
+/*const TodoListStateContext=createContext();
 const TodoListDispatchContext=createContext();
 const TodoListNextIdContext=createContext();
 
@@ -60,27 +181,7 @@ const TodoListProvider=({children})=>{
   const [state, dispatch]=useReducer(todoListReducer, []);
   const nextId=useRef(7);
 
-  async function updateTodoListFromServerData(){
-    try{
-      const data=await fetchServerTodoList();
-      //서버에서 데이터를 받아 온다.
-      setTodos(data);
-    }
-    catch(err){
-      console.log(err);
-    }
-  }
-
-  useEffect(()=>{
-    updateTodoListFromServerData();
-  }, []);
-
-  useEffect(()=>{
-    dispatch({type:'UPDATE', data:todos});
-  }, [todos]);
-
   return (
-    /* state를 쓰는 컨텍스트와 dispatch를 쓰는 컨텍스트를 분리 */
     <TodoListStateContext.Provider value={state}>
       <TodoListDispatchContext.Provider value={dispatch}>
         <TodoListNextIdContext.Provider value={nextId}>
@@ -113,6 +214,6 @@ const useTodoListNextId=()=>{
     throw new Error('Cannot find TodoList nextID Provider');
   }
   return context;
-}
+}*/
 
-export {TodoListProvider, useTodoListState, useTodoListDispatch, useTodoListNextId};
+export {serverFetchReducer, serverCreateReducer, serverEditReducer, serverRemoveReducer, serverToggleReducer};

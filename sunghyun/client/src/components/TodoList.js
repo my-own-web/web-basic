@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import TodoListItem from "./TodoListItem";
-import {useTodoListState} from "../TodoListContext";
 
 const TodoListBlock=styled.div`
   flex:1;
@@ -9,9 +8,8 @@ const TodoListBlock=styled.div`
   overflow-y: auto;
 `;
 
-const TodoList=()=>{
-  const todos=useTodoListState();
-
+const TodoList=({todos, onRemove, onToggle})=>{
+  console.log(todos);
   return (
     <TodoListBlock>
       {todos.map(todo=>(
@@ -21,6 +19,8 @@ const TodoList=()=>{
           text={todo.text}
           done={todo.done}
           editing={todo.editing}
+          onRemove={onRemove}
+          onToggle={onToggle}
         />
         )
       )}

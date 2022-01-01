@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { MdAdd } from 'react-icons/md';
-import {useTodoListDispatch, useTodoListNextId} from "../TodoListContext";
+import {serverCreateReducer} from "../TodoListContext";
 import Input from "./Input";
+import useAsync from "./useAsync";
+import axios from "axios";
 
 const CircleButton=styled.button`
   background: #38d9a9;
@@ -61,29 +63,21 @@ const InsertForm=styled.form`
   border-top: 1px solid #e9ecef;
 `;
 
-const TodoListCreate=()=>{
+const TodoListCreate=({onCreate})=>{
   const [open, setOpen]=useState(false);
   const [value, setValue]=useState('');
-
-  const dispatch=useTodoListDispatch();
-  const nextId=useTodoListNextId();
 
   const onToggle=()=>setOpen(!open);
   const onChange=(e)=>setValue(e.target.value);
   const onSubmit=(e)=>{
     e.preventDefault();
-    dispatch({
-      type:'CREATE',
-      todo:{
-        id:nextId.current,
-        text:value,
-        done:false,
-        editing:false
-      }
-    });
+    onCreate({
+      text:value,
+      done:false,
+      editing:false
+    })
     setValue('');
     setOpen(false);
-    nextId.current+=1;
   }
 
   return (

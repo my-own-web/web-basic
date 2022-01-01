@@ -64,7 +64,7 @@ app.post("/todo/create", async (req, res)=>{
   const conn=await pool.getConnection();
 
   try{
-    await conn.query("insert into todolist (text, done, editing) values(?,?,?)", data.text, data.done, data.editing);
+    await conn.query("insert into todolist (text, done, editing) values (?,?,?)", [data.text, data.done, data.editing]);
   }
   catch(err){
     throw err;
@@ -82,6 +82,9 @@ app.post("/todo/toggle", async (req, res)=>{
 
   try{
     await conn.query("update todolist set done=1-done where id=?", reqid);
+    const [rows]=await conn.query("select * from todolist");
+    console.log(rows);
+    res.send(rows);
   }
   catch(err){
     throw err;
