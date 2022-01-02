@@ -75,7 +75,7 @@ const TodoListCreate=({onCreate})=>{
       text:value,
       done:false,
       editing:false
-    })
+    });
     setValue('');
     setOpen(false);
   }
@@ -102,4 +102,4 @@ const TodoListCreate=({onCreate})=>{
   )
 }
 
-export default React.memo(TodoListCreate);
+export default TodoListCreate;

@@ -70,18 +70,18 @@ const Text = styled.div`
 const TodoListItem=({id, done, text, editing, onToggle, onRemove, onEdit})=>{
   return (
     <TodoListItemBlock>
-      <CheckCircle done={done} onClick={onToggle}>
+      <CheckCircle done={done} onClick={()=>onToggle(id)}>
         {done ? <MdDone />:''}
       </CheckCircle>
       <Text contentEditable={editing} done={done}>{text}</Text>
       <EditButton onClick={onEdit}>
         {editing?<MdSave />:<MdEdit />}
       </EditButton>
-      <RemoveButton onClick={onRemove}>
+      <RemoveButton onClick={()=>onRemove(id)}>
         <MdDelete />
       </RemoveButton>
     </TodoListItemBlock>
   )
 }
 
-export default React.memo(TodoListItem);
+export default TodoListItem;

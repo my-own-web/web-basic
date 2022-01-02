@@ -9,7 +9,7 @@ const TodoListBlock=styled.div`
 `;
 
 const TodoList=({todos, onRemove, onToggle})=>{
-  console.log(todos);
+  //console.log(todos);
   return (
     <TodoListBlock>
       {todos.map(todo=>(
@@ -25,7 +25,6 @@ const TodoList=({todos, onRemove, onToggle})=>{
         )
       )}
     </TodoListBlock>
-
   )
 }
 

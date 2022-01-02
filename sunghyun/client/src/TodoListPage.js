@@ -18,7 +18,6 @@ function TodoListPage() {
   const fetchServerTodoList=async ()=>{
     try{
       const {data}=await axios.get("http://localhost:8000/todo/all");
-      console.log(data);
       setTodos(data);
       return data;
     }catch(err){
@@ -27,20 +26,37 @@ function TodoListPage() {
   }
 
   const onRemove=async (id)=>{
-    setTodos(todos.filter(todo=>todo.id!==id));
-
+    try{
+      await axios.post("http://localhost:8000/todo/remove", {id:id});
+      await fetchServerTodoList();
+    } catch (err){
+      console.log(err);
+    }
   };
 
-  const onToggle=(id)=>{
-    setTodos(todos.map(todo=>todo.id===id?{...todo, done:!todo.done}:todo));
+  const onToggle=async (id)=>{
+    try{
+      console.log(id);
+      await axios.post("http://localhost:8000/todo/toggle", {id:id});
+      await fetchServerTodoList();
+    } catch (err){
+      console.log(err);
+    }
   }
 
-  const onCreate=async (todo)=>{
+  const onEdit=async (id, newTodo)=>{
     try{
-      await axios.post("http://localhost:8000/todo/create", todo);
-      const {data}=await axios.get("http://localhost:8000/todo/all");
-      console.log(data);
-      setTodos(data);
+      await axios.post("http://localhost:8000/todo/edit", {id:id, newTodo:newTodo});
+      await fetchServerTodoList();
+    } catch (err){
+      console.log(err);
+    }
+  }
+
+  const onCreate=async (newTodo)=>{
+    try{
+      await axios.post("http://localhost:8000/todo/create", newTodo);
+      await fetchServerTodoList();
     } catch (err){
       console.log(err);
     }

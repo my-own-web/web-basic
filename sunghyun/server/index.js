@@ -38,7 +38,6 @@ function todoListDBConnection(){
 }
 
 
-
 app.get("/todo/all", async (req, res)=>{
   const pool=todoListDBConnection();
   //console.log("풀 받아옴");
@@ -46,7 +45,7 @@ app.get("/todo/all", async (req, res)=>{
 
   try{
     const [rows]=await conn.query("select * from todolist");
-    console.log(rows);
+    //console.log(rows);
     res.send(rows);
   }
   catch(err){
@@ -59,37 +58,62 @@ app.get("/todo/all", async (req, res)=>{
 
 app.post("/todo/create", async (req, res)=>{
   const data=req.body;
-  console.log("서버에 보내진 데이터 ",data);
+  //console.log("서버에 보내진 데이터 ",data);
   const pool=todoListDBConnection();
   const conn=await pool.getConnection();
 
   try{
     await conn.query("insert into todolist (text, done, editing) values (?,?,?)", [data.text, data.done, data.editing]);
-  }
-  catch(err){
+    res.sendStatus(200);
+  } catch(err){
     throw err;
-  }
-  finally {
+  } finally {
     conn.release();
   }
 });
 
 app.post("/todo/toggle", async (req, res)=>{
+  const data=req.body;
+  console.log(data);
+  const pool=todoListDBConnection();
+  const conn=await pool.getConnection();
+  try{
+    await conn.query("update todolist set done=1-done where id=?", data.id);
+    res.sendStatus(200);
+  } catch(err){
+    throw err;
+  } finally {
+    conn.release();
+  }
+});
+
+app.post("/todo/remove", async(req, res)=>{
+  const data=req.body;
+  const pool=todoListDBConnection();
+  const conn=await pool.getConnection();
+
+  try{
+    await conn.query("delete from todolist where id=?", data.id);
+    res.sendStatus(200);
+  } catch (err){
+    throw err;
+  } finally {
+    conn.release();
+  }
+});
+
+app.post("/todo/edit", async (req, res)=>{
   const reqid=req.body;
   console.log(reqid);
   const pool=todoListDBConnection();
   const conn=await pool.getConnection();
 
   try{
-    await conn.query("update todolist set done=1-done where id=?", reqid);
-    const [rows]=await conn.query("select * from todolist");
-    console.log(rows);
-    res.send(rows);
-  }
-  catch(err){
+    await conn.query("delete from todolist where id=?", reqid);
+    res.sendStatus(200);
+  } catch (err){
     throw err;
-  }
-  finally {
+  } finally {
     conn.release();
   }
 });
