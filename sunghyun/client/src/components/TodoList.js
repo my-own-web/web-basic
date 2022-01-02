@@ -8,7 +8,7 @@ const TodoListBlock=styled.div`
   overflow-y: auto;
 `;
 
-const TodoList=({todos, onRemove, onToggle})=>{
+const TodoList=({todos, onRemove, onToggle, onEdit})=>{
   //console.log(todos);
   return (
     <TodoListBlock>
@@ -21,6 +21,7 @@ const TodoList=({todos, onRemove, onToggle})=>{
           editing={todo.editing}
           onRemove={onRemove}
           onToggle={onToggle}
+          onEdit={onEdit}
         />
         )
       )}

@@ -44,9 +44,9 @@ function TodoListPage() {
     }
   }
 
-  const onEdit=async (id, newTodo)=>{
+  const onEdit=async (curTodo)=>{
     try{
-      await axios.post("http://localhost:8000/todo/edit", {id:id, newTodo:newTodo});
+      await axios.post("http://localhost:8000/todo/edit", curTodo);
       await fetchServerTodoList();
     } catch (err){
       console.log(err);
@@ -71,7 +71,7 @@ function TodoListPage() {
       <GlobalStyle />
       <PageTemplateBlock height='770px'>
         <TodoListHeader todos={todos}/>
-        <TodoList todos={todos} onRemove={onRemove} onToggle={onToggle}/>
+        <TodoList todos={todos} onRemove={onRemove} onToggle={onToggle} onEdit={onEdit}/>
         <TodoListCreate onCreate={onCreate}/>
       </PageTemplateBlock>
     </>

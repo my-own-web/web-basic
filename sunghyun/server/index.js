@@ -103,15 +103,15 @@ app.post("/todo/remove", async(req, res)=>{
 });
 
 app.post("/todo/edit", async (req, res)=>{
-  const reqid=req.body;
-  console.log(reqid);
+  const todo=req.body;
+  console.log(todo);
   const pool=todoListDBConnection();
   const conn=await pool.getConnection();
 
   try{
-    await conn.query("delete from todolist where id=?", reqid);
+    await conn.query("update todolist set text=?, done=?, editing=? where id=?", [todo.text, todo.done, !todo.editing, todo.id]);
     res.sendStatus(200);
-  } catch (err){
+  } catch(err){
     throw err;
   } finally {
     conn.release();

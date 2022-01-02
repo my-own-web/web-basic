@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import styled, {css} from "styled-components";
 import {MdDone, MdDelete, MdEdit, MdSave} from "react-icons/md";
 
@@ -67,14 +67,35 @@ const Text = styled.div`
     `}
 `;
 
+const TextInput=styled.input`
+  flex: 1;
+  font-size: 21px;
+  color: #495057;
+  ${props =>
+          props.done &&
+          css`
+      color: #ced4da;
+    `}
+`;
+
 const TodoListItem=({id, done, text, editing, onToggle, onRemove, onEdit})=>{
+  const [curText, setCurText]=useState(text);
+
+  const onChange=(e)=>{
+    setCurText(e.target.value);
+  }
+
   return (
     <TodoListItemBlock>
       <CheckCircle done={done} onClick={()=>onToggle(id)}>
         {done ? <MdDone />:''}
       </CheckCircle>
-      <Text contentEditable={editing} done={done}>{text}</Text>
-      <EditButton onClick={onEdit}>
+      {
+        editing?
+          <TextInput done={done} value={curText} onChange={onChange}/>:
+          <Text done={done}>{curText}</Text>
+      }
+      <EditButton onClick={()=>onEdit({id:id, done:done, text:curText, editing:editing})}>
         {editing?<MdSave />:<MdEdit />}
       </EditButton>
       <RemoveButton onClick={()=>onRemove(id)}>

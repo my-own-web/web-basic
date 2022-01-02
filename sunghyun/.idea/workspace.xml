@@ -8,7 +8,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/TodoListPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/TodoListPage.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/components/TodoList.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/TodoList.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/TodoListCreate.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/TodoListCreate.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/components/TodoListItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/TodoListItem.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/index.js" afterDir="false" />
     </list>
@@ -79,7 +78,9 @@
       <workItem from="1640963543492" duration="195000" />
       <workItem from="1641015063092" duration="1817000" />
       <workItem from="1641024774012" duration="21424000" />
-      <workItem from="1641093842719" duration="2716000" />
+      <workItem from="1641093842719" duration="2764000" />
+      <workItem from="1641113967305" duration="599000" />
+      <workItem from="1641125845070" duration="3511000" />
     </task>
     <servers />
   </component>
