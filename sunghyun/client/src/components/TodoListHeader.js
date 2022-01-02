@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import {useTodoListState} from "../TodoListContext";
 
 const TodoListHeaderBlock=styled.div`
   padding: 48px 32px 24px 32px;
