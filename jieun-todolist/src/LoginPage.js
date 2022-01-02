@@ -98,6 +98,7 @@ function LoginPage() {
             else{
                 setInputs({ id: '', password: '' });
                 setWrong(true);
+                alert('Wrong ID or PASSWORD'); // replacing Popup component
             }
         })
         .catch((error)=>{
@@ -123,23 +124,30 @@ function LoginPage() {
             setWrong(false);
     }
 
+    const onJoin = () => {
+        <Popup show={wrong}>
+            <div >가입</div>
+            <Button onClick={onClick} color='#CFD4D1' style={{float:'right'}}>OK</Button>
+        </Popup>
+    }
+
     return (
         <>
             <LoginBlock>
                 <Input name="id" placeholder="ID" onChange={onChange} value={inputs.id} />
                 <Input name="password" placeholder="PASSWORD" onChange={onChange} value={inputs.password} onKeyPress={onInputKeyPress} />
                 <div>
-                    <Button color='pink' style={{ marginRight: '40%' }}>가입</Button>
+                    <Button color='pink' style={{ marginRight: '40%' }} onClick={onJoin}>가입</Button>
                     <Button onClick={onSubmit}>로그인</Button>
                 </div>
             </LoginBlock>
 
 
             {/* action for wrong login*/}
-            <Popup show={wrong}>
+            {/* <Popup show={wrong}>
                 <div >Wrong ID or PASSWORD</div>
                 <Button onClick={onClick} color='#CFD4D1' style={{float:'right'}}>OK</Button>
-            </Popup>
+            </Popup> */}
 
             {/*dbg*/}
             <div style={{ margin: '0 auto', width: '200px' }}>
