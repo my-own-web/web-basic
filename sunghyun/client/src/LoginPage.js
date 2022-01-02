@@ -1,19 +1,18 @@
 import React, {useEffect} from "react";
 import {createGlobalStyle} from "styled-components";
 import PageTemplateBlock from "./components/PageTemplate";
-import LoginHeader from "./components/LoginHeader";
+import LogoHeader from "./components/LogoHeader";
 import LoginInput from "./components/LoginInput";
 import LoginMenu from "./components/LoginMenu";
-import axios from "axios";
 
 const GlobalStyle=createGlobalStyle`
   body{
-    background: #f8f0fc;
+    background: #e5dbff;
   }
 `;
 
 const LoginPage=()=>{
-  const fetchData=async ()=>{
+  /*const fetchData=async ()=>{
     try{
       const res=await axios.get('http://localhost:8000');
       //서버에서 데이터 가져올땐 async/await 사용 필수
@@ -27,12 +26,12 @@ const LoginPage=()=>{
   }
   useEffect(()=>{
     fetchData();
-  }, []);
+  }, []);*/
 
   return (
-    <PageTemplateBlock height='600px'>
+    <PageTemplateBlock height='650px'>
       <GlobalStyle />
-      <LoginHeader />
+      <LogoHeader text='로그인'/>
       <LoginInput />
       <LoginMenu />
     </PageTemplateBlock>

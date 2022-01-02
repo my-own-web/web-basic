@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const PageTemplateBlock=styled.div`
   width:512px;
-  height:${props=>props.height || '500px'};
+  height:${props=>props.height || '600px'};
   
   position: relative;
   background: white;
