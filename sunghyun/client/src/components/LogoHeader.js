@@ -11,7 +11,7 @@ const LogoHeaderBlock=styled.div`
   h1{
     margin:20px 0 0 0;
     font-size:3.5rem;
-    color:#862e9c
+    color:#ae3ec9
   }
   h3{
     margin:10px 0 0 0;

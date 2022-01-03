@@ -1,4 +1,6 @@
 import Input from "./Input";
+import InputPositioner from "./InputPositioner";
+import InputInfo from "./InputInfo";
 import {ColumnContainer} from "./Container";
 import React from "react";
 import styled from "styled-components";
@@ -19,13 +21,6 @@ const userInfo=[
     password:'1234'
   },
 ];
-
-const InputFormPositioner=styled.form`
-  padding: 12px 0 12px 0;
-  background: #f8f9fa;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-`;
 
 const validCheck=({id, password})=>{
   const userInputInfo=userInfo.find(info=>info.id===id);
@@ -57,14 +52,14 @@ const LoginInput=()=>{
 
   return (
     <ColumnContainer>
-      <h1>ID</h1>
-      <InputFormPositioner>
+      <InputInfo>ID</InputInfo>
+      <InputPositioner>
         <Input name='id' onChange={onChange}/>
-      </InputFormPositioner>
-      <h1>PASSWORD</h1>
-      <InputFormPositioner>
+      </InputPositioner>
+      <InputInfo>PASSWORD</InputInfo>
+      <InputPositioner>
         <Input type="password" name='password' onChange={onChange} />
-      </InputFormPositioner>
+      </InputPositioner>
       <LoginButton width='8rem' height='3rem' background='#da77f2' onClick={onSubmit}>로그인</LoginButton>
     </ColumnContainer>
   );
