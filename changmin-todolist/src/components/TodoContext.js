@@ -37,7 +37,7 @@ function todoReducer(state, action) {
       throw new Error(`Undefined Action: ${action.type}`);
   }
   async function sendTodo() {
-    await axios.post("http://localhost:3001/api/todo", { action });
+    await axios.post("http://localhost:3001/todo", { action });
   }
   if (action.type !== "INIT") sendTodo();
   return newState;
@@ -53,7 +53,7 @@ export function TodoProvider({ children }) {
 
   useEffect(() => {
     async function getInitialTodo() {
-      await axios.get("http://localhost:3001/api/todo").then((res) => {
+      await axios.get("http://localhost:3001/todo").then((res) => {
         dispatch({ type: "INIT", todo: res.data });
         nextId.current = res.data[res.data.length - 1].id + 1;
       });
