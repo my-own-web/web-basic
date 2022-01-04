@@ -118,6 +118,22 @@ app.post("/todo/edit", async (req, res)=>{
   }
 });
 
+app.post("/signup", async(req, res)=>{
+  const newUser=req.body;
+  console.log(newUser);
+  const pool=todoListDBConnection();
+  const conn=await pool.getConnection();
+
+  try{
+    await conn.query("insert into userinfo (username, password) values(?,?)", [newUser.username, newUser.password]);
+    res.sendStatus(200);
+  } catch(err){
+    throw err;
+  } finally {
+    conn.release();
+  }
+})
+
 app.listen(port, (req, res)=>{
   console.log(`server port 8000`);
 });
