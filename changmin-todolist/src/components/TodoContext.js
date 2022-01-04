@@ -10,10 +10,12 @@ import React, {
 const todoList = [];
 
 function todoReducer(state, action) {
-  let newState;
+  let newState = [];
   switch (action.type) {
     case "INIT":
-      newState = action.todo;
+      newState = action.todo.map(
+        (todo) => (todo.done = { ...todo, done: !!todo.done })
+      );
       break;
     case "CREATE":
       newState = state.concat(action.todo);
@@ -35,9 +37,9 @@ function todoReducer(state, action) {
       throw new Error(`Undefined Action: ${action.type}`);
   }
   async function sendTodo() {
-    await axios.post("http://localhost:3001/api/todo", { todo: newState });
+    await axios.post("http://localhost:3001/api/todo", { action });
   }
-  sendTodo();
+  if (action.type !== "INIT") sendTodo();
   return newState;
 }
 
@@ -47,17 +49,17 @@ const TodoNextIdContext = createContext();
 
 export function TodoProvider({ children }) {
   const [state, dispatch] = useReducer(todoReducer, todoList);
+  const nextId = useRef(0);
 
   useEffect(() => {
     async function getInitialTodo() {
       await axios.get("http://localhost:3001/api/todo").then((res) => {
         dispatch({ type: "INIT", todo: res.data });
+        nextId.current = res.data[res.data.length - 1].id + 1;
       });
     }
     getInitialTodo();
   }, []);
-
-  const nextId = useRef(todoList.length);
 
   return (
     <TodoStateContext.Provider value={state}>
