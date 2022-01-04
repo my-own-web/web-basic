@@ -17,7 +17,19 @@ const SignUpInput=()=>{
   return (
     <ColumnContainer>
       <RowContainer>
-        <InputInfo>ID</InputInfo>
+        <InputInfo>아이디</InputInfo>
+        <InputPositioner>
+          <Input name='id'/>
+        </InputPositioner>
+      </RowContainer>
+      <RowContainer>
+        <InputInfo>비밀번호</InputInfo>
+        <InputPositioner>
+          <Input name='id'/>
+        </InputPositioner>
+      </RowContainer>
+      <RowContainer>
+        <InputInfo>비밀번호 확인</InputInfo>
         <InputPositioner>
           <Input name='id'/>
         </InputPositioner>

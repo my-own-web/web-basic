@@ -52,7 +52,7 @@ const LoginInput=()=>{
 
   return (
     <ColumnContainer>
-      <InputInfo>ID</InputInfo>
+      <InputInfo>USERNAME</InputInfo>
       <InputPositioner>
         <Input name='id' onChange={onChange}/>
       </InputPositioner>
