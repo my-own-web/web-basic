@@ -1,6 +1,4 @@
-const express = require("express");
-const router = express.Router();
-
+const jwt = require("jsonwebtoken");
 const mysql = require("mysql2/promise");
 const dotenv = require("dotenv").config();
 const options = {
@@ -10,6 +8,7 @@ const options = {
   database: process.env.MYSQL_DATABASE,
   connectionLimit: 400,
 };
+const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 let globalPool;
 function connectDB() {
@@ -18,3 +17,63 @@ function connectDB() {
   }
   return globalPool;
 }
+
+exports.createToken = async (req, res) => {
+  console.log(req.body);
+
+  const pool = connectDB();
+  const conn = await pool.getConnection();
+
+  try {
+    const [rows] = await conn.query(
+      `SELECT * FROM user WHERE username = ${req.body.username} AND password = ${req.body.password}`
+    );
+
+    if (rows.length) {
+      const token = jwt.sign(
+        {
+          username: rows[0].username,
+        },
+        SECRET_KEY,
+        {
+          expiresIn: "1h",
+        }
+      );
+
+      res.cookie("user", token);
+      res.send("OK");
+    } else {
+      res.status(400).send("USER_NOT_FOUND");
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  } finally {
+    conn.release();
+  }
+};
+
+exports.createNewUser = async (req, res) => {
+  const pool = connectDB();
+  const conn = await pool.getConnection();
+
+  try {
+    const [rows] = await conn.query(
+      `SELECT * FROM user WHERE username = ${req.body.username}`
+    );
+
+    if (!rows.length) {
+      await conn.query(
+        `INSERT INTO user (username, password) VALUES ('${req.body.username}', '${req.body.password}')`
+      );
+      res.send("OK");
+    } else {
+      res.status(400).send("USER_EXISTS");
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  } finally {
+    conn.release();
+  }
+};

@@ -25,6 +25,7 @@ exports.getTodoList = async (req, res) => {
     res.send(rows);
   } catch (err) {
     console.log(err);
+    res.sendStatus(500);
   } finally {
     conn.release();
   }
