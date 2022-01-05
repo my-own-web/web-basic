@@ -26,7 +26,7 @@ exports.createToken = async (req, res) => {
 
   try {
     const [rows] = await conn.query(
-      `SELECT * FROM user WHERE username = ${req.body.username} AND password = ${req.body.password}`
+      `SELECT * FROM user WHERE username = '${req.body.username}' AND password = '${req.body.password}'`
     );
 
     if (rows.length) {

@@ -5,7 +5,7 @@ import TodoTemplate from "./components/TodoTemplate";
 import Login from "./Login";
 import MenuTemplate from "./components/MenuTemplate";
 import { TodoProvider } from "./components/TodoContext";
-import { AccountProvider } from "./components/AccountContext";
+import { UserProvider } from "./components/UserContext";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -33,14 +33,14 @@ const MenuStyle = {
 
 const App = () => {
   /*
-  const account = useAccountCurrent();
+  const account = useUserCurrent();
   const onLogout = () => {
     account.current = undefined;
   };
   */
   return (
     <TodoProvider>
-      <AccountProvider>
+      <UserProvider>
         <GlobalStyle />
         <MenuTemplate>
           <Menu>
@@ -71,7 +71,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
           </Routes>
         </TodoTemplate>
-      </AccountProvider>
+      </UserProvider>
     </TodoProvider>
   );
 };

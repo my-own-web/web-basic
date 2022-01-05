@@ -1,7 +1,8 @@
+import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
-import { useAccountCurrent, useAccountState } from "./AccountContext";
+import { useUserCurrent } from "./UserContext";
 
 const LoginFormBlock = styled.form`
   flex: 1;
@@ -67,8 +68,7 @@ function LoginForm() {
     password: "",
   });
   const { username, password } = inputs; // 입력받은 username / password
-  const account = useAccountCurrent(); // 현재 로그인된 계정
-  const accounts = useAccountState(); // 현재 등록되어 있는 계정들
+  const currentUsername = useUserCurrent(); // 현재 로그인된 계정
   const usernameInput = useRef(); // Username 입력 focus 위해 사용
   const passwordInput = useRef(); // Password 입력 focus 위해 사용
   const navigate = useNavigate(); // 로그인 성공 후 navigate 위해 사용
@@ -94,35 +94,45 @@ function LoginForm() {
       return;
     }
 
-    account.current = accounts.find(
-      (e) => e.username === username && e.password === password
-    );
-    if (!account.current) {
-      alert("Username 또는 Password가 올바르지 않습니다.");
+    async function checkUser() {
+      await axios
+        .post("http://localhost:3001/user/login", inputs)
+        .then((res) => {
+          switch (res.data) {
+            case "OK":
+              currentUsername.current = username;
+              alert(`성공적으로 로그인되었습니다. 안녕하세요, ${username}님!`);
+              navigate("/");
+              break;
+            case "USER_NOT_FOUND":
+              alert("Username 또는 Password가 올바르지 않습니다.");
 
-      // password input field 초기화
-      setInputs({ ...inputs, password: "" });
+              // password input field 초기화
+              setInputs({ ...inputs, password: "" });
 
-      // password field에 focus
-      passwordInput.current.focus();
-    } else {
-      alert(`성공적으로 로그인되었습니다. 안녕하세요, ${username}님!`);
-      navigate("/");
+              // password field에 focus
+              passwordInput.current.focus();
+              break;
+            default:
+              alert("알 수 없는 오류가 발생했습니다.");
+          }
+        });
     }
+    checkUser();
   };
 
   const onLogout = () => {
-    account.current = undefined;
+    currentUsername.current = undefined;
 
     alert("로그아웃되었습니다.");
     navigate("/");
   };
 
-  if (!!account.current) {
+  if (!!currentUsername.current) {
     // 로그인 된 화면
     return (
       <LoginFormBlock>
-        <h1>안녕하세요, {account.current.username}님!</h1>
+        <h1>안녕하세요, {currentUsername.current}님!</h1>
         <button onClick={onLogout}>로그아웃</button>
       </LoginFormBlock>
     );
