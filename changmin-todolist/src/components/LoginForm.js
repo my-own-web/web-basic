@@ -64,7 +64,7 @@ const Input = styled.input`
   box-sizing: border-box;
 `;
 
-function LoginForm({ currentUsername, setCookie, removeCookie }) {
+function LoginForm({ currentUsername, setCurrentUsername }) {
   const [inputs, setInputs] = useState({
     username: "",
     password: "",
@@ -103,7 +103,7 @@ function LoginForm({ currentUsername, setCookie, removeCookie }) {
         .then((res) => {
           switch (res.data) {
             case "OK":
-              currentUsername.current = username;
+              setCurrentUsername(username);
               alert(`성공적으로 로그인되었습니다. 안녕하세요, ${username}님!`);
               navigate("/");
               break;
@@ -130,18 +130,18 @@ function LoginForm({ currentUsername, setCookie, removeCookie }) {
   };
 
   const onLogout = () => {
-    currentUsername.current = undefined;
+    setCurrentUsername(undefined);
     cookies.remove("user");
 
     alert("로그아웃되었습니다.");
     navigate("/");
   };
 
-  if (!!currentUsername.current) {
+  if (!!currentUsername) {
     // 로그인 된 화면
     return (
       <LoginFormBlock>
-        <h1>안녕하세요, {currentUsername.current}님!</h1>
+        <h1>안녕하세요, {currentUsername}님!</h1>
         <button onClick={onLogout}>로그아웃</button>
       </LoginFormBlock>
     );

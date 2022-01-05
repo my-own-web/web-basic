@@ -5,7 +5,7 @@ import TodoTemplate from "./components/TodoTemplate";
 import LoginForm from "./components/LoginForm";
 import MenuTemplate from "./components/MenuTemplate";
 import { TodoProvider } from "./components/TodoContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie";
 
@@ -34,7 +34,7 @@ const MenuStyle = {
 };
 
 const App = () => {
-  const currentUsername = useRef();
+  const [currentUsername, setCurrentUsername] = useState();
 
   async function verifyToken() {
     await axios
@@ -42,7 +42,7 @@ const App = () => {
         withCredentials: true,
       })
       .then((res) => {
-        currentUsername.current = res.data;
+        setCurrentUsername(res.data);
       })
       .catch((err) => {
         console.log("Invalid token, removing the cookie");
@@ -66,7 +66,7 @@ const App = () => {
         </Menu>
         <Menu>
           <Link to="/login" style={MenuStyle}>
-            {!currentUsername.current ? "Login" : currentUsername.current}
+            {!currentUsername ? "Login" : currentUsername}
           </Link>
         </Menu>
       </MenuTemplate>
@@ -75,7 +75,12 @@ const App = () => {
           <Route path="/" element={<Main />} />
           <Route
             path="/login"
-            element={<LoginForm currentUsername={currentUsername} />}
+            element={
+              <LoginForm
+                currentUsername={currentUsername}
+                setCurrentUsername={setCurrentUsername}
+              />
+            }
           />
         </Routes>
       </TodoTemplate>
