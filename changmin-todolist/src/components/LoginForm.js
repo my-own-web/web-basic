@@ -2,7 +2,9 @@ import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
-import { useUserCurrent } from "./UserContext";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const LoginFormBlock = styled.form`
   flex: 1;
@@ -62,13 +64,12 @@ const Input = styled.input`
   box-sizing: border-box;
 `;
 
-function LoginForm({ setHasCookie, removeCookie }) {
+function LoginForm({ currentUsername, setCookie, removeCookie }) {
   const [inputs, setInputs] = useState({
     username: "",
     password: "",
   });
   const { username, password } = inputs; // 입력받은 username / password
-  const currentUsername = useUserCurrent(); // 현재 로그인된 계정
   const usernameInput = useRef(); // Username 입력 focus 위해 사용
   const passwordInput = useRef(); // Password 입력 focus 위해 사용
   const navigate = useNavigate(); // 로그인 성공 후 navigate 위해 사용
@@ -103,7 +104,6 @@ function LoginForm({ setHasCookie, removeCookie }) {
           switch (res.data) {
             case "OK":
               currentUsername.current = username;
-              setHasCookie(true);
               alert(`성공적으로 로그인되었습니다. 안녕하세요, ${username}님!`);
               navigate("/");
               break;
@@ -118,6 +118,7 @@ function LoginForm({ setHasCookie, removeCookie }) {
               break;
             default:
               alert("알 수 없는 오류가 발생했습니다.");
+              break;
           }
         })
         .catch((err) => {
@@ -130,8 +131,7 @@ function LoginForm({ setHasCookie, removeCookie }) {
 
   const onLogout = () => {
     currentUsername.current = undefined;
-    removeCookie("user");
-    setHasCookie(false);
+    cookies.remove("user");
 
     alert("로그아웃되었습니다.");
     navigate("/");

@@ -39,15 +39,17 @@ exports.createToken = async (req, res) => {
           expiresIn: "1h",
         }
       );
-
-      res.cookie("user", token);
+      res.cookie("user", token, {
+        path: "/",
+        maxAge: 60 * 60 * 1000,
+      });
       res.send("OK");
     } else {
       res.status(400).send("USER_NOT_FOUND");
     }
   } catch (err) {
     console.log(err);
-    res.sendStatus(500);
+    res.status(500).send("INTERNAL_ERROR");
   } finally {
     conn.release();
   }
@@ -59,7 +61,7 @@ exports.createNewUser = async (req, res) => {
 
   try {
     const [rows] = await conn.query(
-      `SELECT * FROM user WHERE username = ${req.body.username}`
+      `SELECT * FROM user WHERE username = '${req.body.username}'`
     );
 
     if (!rows.length) {

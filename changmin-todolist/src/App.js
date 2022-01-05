@@ -5,9 +5,11 @@ import TodoTemplate from "./components/TodoTemplate";
 import LoginForm from "./components/LoginForm";
 import MenuTemplate from "./components/MenuTemplate";
 import { TodoProvider } from "./components/TodoContext";
-import { UserProvider } from "./components/UserContext";
-import { useCookies, withCookies } from "react-cookie";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
+import axios from "axios";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -32,51 +34,53 @@ const MenuStyle = {
 };
 
 const App = () => {
-  const [cookies, removeCookie] = useCookies(["user"]);
-  const [hasCookie, setHasCookie] = useState(false);
+  const currentUsername = useRef();
+
+  async function verifyToken() {
+    await axios
+      .post("http://localhost:3001/user/auth", null, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        currentUsername.current = res.data;
+      })
+      .catch((err) => {
+        console.log("Invalid token, removing the cookie");
+        cookies.remove("user");
+      });
+  }
 
   useEffect(() => {
-    if (cookies.user && cookies.user !== "undefined") {
-      setHasCookie(true);
-    }
-  }, [cookies]);
+    if (cookies.get("user") && cookies.get("user") !== "undefined")
+      verifyToken();
+  }, []);
 
   return (
     <TodoProvider>
-      <UserProvider>
-        <GlobalStyle />
-        <MenuTemplate>
-          <Menu>
-            <Link to="/" style={MenuStyle}>
-              Home
-            </Link>
-          </Menu>
-          <Menu>
-            <Link to="/login" style={MenuStyle}>
-              {hasCookie ? "Logout" : "Login"}
-            </Link>
-          </Menu>
-        </MenuTemplate>
-        <TodoTemplate>
-          <Routes>
-            <Route path="/" element={<Main />} />
-            <Route
-              path="/login"
-              element={
-                <LoginForm
-                  setHasCookie={setHasCookie}
-                  removeCookie={() => {
-                    removeCookie("user");
-                    setHasCookie(false);
-                  }}
-                />
-              }
-            />
-          </Routes>
-        </TodoTemplate>
-      </UserProvider>
+      <GlobalStyle />
+      <MenuTemplate>
+        <Menu>
+          <Link to="/" style={MenuStyle}>
+            Home
+          </Link>
+        </Menu>
+        <Menu>
+          <Link to="/login" style={MenuStyle}>
+            {!currentUsername.current ? "Login" : currentUsername.current}
+          </Link>
+        </Menu>
+      </MenuTemplate>
+      <TodoTemplate>
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route
+            path="/login"
+            element={<LoginForm currentUsername={currentUsername} />}
+          />
+        </Routes>
+      </TodoTemplate>
     </TodoProvider>
   );
 };
 
-export default withCookies(App);
+export default App;
