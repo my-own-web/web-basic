@@ -1,50 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import styled, { css } from 'styled-components';
-import { darken, lighten } from 'polished';
 import { useNavigate } from 'react-router-dom';
-import Popup from './login/Popup';
 import axios from 'axios';
-
-const LoginBlock = styled.div`
-    width: 200px;
-
-    position: relative; 
-    background: white;
-    border-radius: 16px; // 모서리 둥굴게
-    box-shadow: 0 0 8px 0 rgba(0,0,0,100); // 박스 감싸는 그림자
-
-    margin: 0 auto; // 페이지 중앙
-
-    padding: 20px;
-    margin-top: 10px;
-    margin-bottom: 32px;
-    display: flex;
-    flex-direction: column; // 플렉스 컨테이너 내 아이템 배치 주축 및 방향
-`;
-
-const Button = styled.button`
-    border: none;
-    width: 30%;
-    padding: 3px;
-    margin-top:10px;
-    background: ${props => props.color || '#38d9a9'};
-    &:hover{
-        background: ${props => lighten(0.1, props.color || '#38d9a9')};
-    }
-    &:active{
-        background: ${props => darken(0.1, props.color || '#38d9a9')};
-    }
-`;
-
-const Input = styled.input`
-  padding: 12px;
-  border-radius: 4px;
-  border: 1px solid #dee2e6;
-  width: 100%;
-  outline: none;
-  font-size: 18px;
-  box-sizing: border-box;
-`;
+import Button from './design/Button';
+import Input from './design/Input';
+import SmallBlock from './design/SmallBlock';
 
 function LoginPage() {
     // 페이지 이동 준비
@@ -54,22 +13,12 @@ function LoginPage() {
         id: '',
         password: ''
     });
-    // 제출한 id, password
-    const [submits, setSubmits] = useState({
-        id: '',
-        password: ''
-    });
     
-    // NOTwrong != valid, NOTvalid != wrong
-    // wrong: true->invalid ID/PASSWORD
-    const [wrong, setWrong] = useState(false);
     const [valid, setValid] = useState(false);
     useEffect(()=>{
         if(valid){
             navigate("/todolist");
-            console.log('valid: true');
         }
-        else console.log('valid: false');
     }, [valid]);
 
     const onChange = (e) => {
@@ -82,88 +31,34 @@ function LoginPage() {
 
     // express에 데이터 보내기. onSubmit에서 호출
     const fetchValid = async() =>{
-        const response = await axios({
-            url: 'http://localhost:3001/info',
-            method: 'post',
-            data: {
-                id: inputs.id,
-                password: inputs.password
-            }
-        })
-        .then((res)=>{
+        try{
+            const res = await axios.post('http://localhost:3001/login', inputs);
             setValid(res.data);
-            if(res.data){
-                setWrong(false);
+            if(!res.data){
+                alert('Wrong ID or PASSWORD'); 
             }
-            else{
-                setInputs({ id: '', password: '' });
-                setWrong(true);
-                alert('Wrong ID or PASSWORD'); // replacing Popup component
-            }
-        })
-        .catch((error)=>{
-            console.log(error);
-        });
-        
-    };
-
-    // 로그인 버튼 누르면 그때까지 입력받은 id, password를 제출, validity check
-    const onSubmit = () => {
-        setSubmits({ id: inputs.id, password: inputs.password });
-
-        fetchValid();        
+        } catch(err){
+            console.log(err);
+        } 
+        setInputs({ id: '', password: '' });
     };
 
     const onInputKeyPress = (e) => {
         if (e.key == 'Enter') {
-            onSubmit();
+            fetchValid();
         }
     }
 
-    const onClick = () => {
-            setWrong(false);
-    }
-
-    const onJoin = () => {
-        <Popup show={wrong}>
-            <div >가입</div>
-            <Button onClick={onClick} color='#CFD4D1' style={{float:'right'}}>OK</Button>
-        </Popup>
-    }
-
     return (
-        <>
-            <LoginBlock>
-                <Input name="id" placeholder="ID" onChange={onChange} value={inputs.id} />
-                <Input name="password" placeholder="PASSWORD" onChange={onChange} value={inputs.password} onKeyPress={onInputKeyPress} />
-                <div>
-                    <Button color='pink' style={{ marginRight: '40%' }} onClick={onJoin}>가입</Button>
-                    <Button onClick={onSubmit}>로그인</Button>
-                </div>
-            </LoginBlock>
-
-
-            {/* action for wrong login*/}
-            {/* <Popup show={wrong}>
-                <div >Wrong ID or PASSWORD</div>
-                <Button onClick={onClick} color='#CFD4D1' style={{float:'right'}}>OK</Button>
-            </Popup> */}
-
-            {/*dbg*/}
-            <div style={{ margin: '0 auto', width: '200px' }}>
-                <p>
-                    <div><b>ID:</b> {submits.id}</div>
-                    <div><b>PASSWORD:</b> {submits.password}</div>
-                </p>
-
-                <p style={{ color: "blue" }}>
-                    <div><b>valid id password</b></div>
-                    <div>id password</div>
-                    <div>jieun kwon</div>
-                    <div>a b</div>
-                </p>
+        <SmallBlock>
+            <p>로그인</p>
+            <Input name="id" placeholder="ID" onChange={onChange} value={inputs.id} />
+            <Input name="password" placeholder="PASSWORD" onChange={onChange} value={inputs.password} onKeyPress={onInputKeyPress} />
+            <div>
+                <Button color='pink' style={{ marginRight: '40%' }} onClick={() => {navigate("/join")}}>회원가입</Button>
+                <Button onClick={fetchValid}>로그인</Button>
             </div>
-        </>
+        </SmallBlock>
     )
 }
 

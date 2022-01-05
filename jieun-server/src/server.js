@@ -27,37 +27,44 @@ function DB_Connection() {
   return globalPool;
 }
 
-const infos = [{
-  id: 'id',
-  password: 'password',
-  login: false
-},
-{
-  id: 'jieun',
-  password: 'kwon',
-  login: false
-},
-{
-  id: 'a',
-  password: 'b',
-  login: false
-}];
+app.post('/login', async (req, res) => {
+  const inputs = req.body;
+  const pool = DB_Connection();
+  const conn = await pool.getConnection();
 
-app.post('/info', (req, res) => {
-  console.log('req.body: ', req.body);
-
-  // infos 배열에 id, password가 존재하면 true
-  // 없으면 false 반환
-  const index = infos.find((element) => element.id === req.body.id);
-  if (index && index.password === req.body.password) {
-    res.send(true);
-    console.log('valid: true');
-  }
-  else {
-    res.send(false);
-    console.log('valid: false');
+  try{
+    const [row] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE id='${inputs.id}' AND password='${inputs.password}'`);
+    console.log(row[0]);
+    if(row[0].num) res.send(true);
+    else res.send(false);
+  } catch(error){
+    console.log(error);
+  } finally{
+    conn.release();
   }
 
+});
+
+app.post('/join', async (req, res) => {
+  const inputs = req.body;
+  const pool = DB_Connection();
+  const conn = await pool.getConnection();
+
+  try{
+    const [exist] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE id='${inputs.newId}'`);
+    if(exist[0].num < 1){
+      await conn.query(`INSERT INTO users(id, password) VALUES ('${inputs.newId}', '${inputs.newPassword}')`);
+      res.send(true);
+    }
+    else{
+      res.send(false);
+    }
+
+  } catch(error){
+    console.log(error);
+  } finally{
+    conn.release();
+  }
 });
 
 app.post('/todos', async (req, res) => {
