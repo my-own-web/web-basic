@@ -62,7 +62,7 @@ const Input = styled.input`
   box-sizing: border-box;
 `;
 
-function LoginForm() {
+function LoginForm({ setHasCookie, removeCookie }) {
   const [inputs, setInputs] = useState({
     username: "",
     password: "",
@@ -96,11 +96,14 @@ function LoginForm() {
 
     async function checkUser() {
       await axios
-        .post("http://localhost:3001/user/login", inputs)
+        .post("http://localhost:3001/user/login", inputs, {
+          withCredentials: true,
+        })
         .then((res) => {
           switch (res.data) {
             case "OK":
               currentUsername.current = username;
+              setHasCookie(true);
               alert(`성공적으로 로그인되었습니다. 안녕하세요, ${username}님!`);
               navigate("/");
               break;
@@ -116,6 +119,10 @@ function LoginForm() {
             default:
               alert("알 수 없는 오류가 발생했습니다.");
           }
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("알 수 없는 오류가 발생했습니다.");
         });
     }
     checkUser();
@@ -123,6 +130,8 @@ function LoginForm() {
 
   const onLogout = () => {
     currentUsername.current = undefined;
+    removeCookie("user");
+    setHasCookie(false);
 
     alert("로그아웃되었습니다.");
     navigate("/");

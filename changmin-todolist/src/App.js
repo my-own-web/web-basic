@@ -2,10 +2,12 @@ import Main from "./Main";
 import styled, { createGlobalStyle } from "styled-components";
 import { Routes, Route, Link } from "react-router-dom";
 import TodoTemplate from "./components/TodoTemplate";
-import Login from "./Login";
+import LoginForm from "./components/LoginForm";
 import MenuTemplate from "./components/MenuTemplate";
 import { TodoProvider } from "./components/TodoContext";
 import { UserProvider } from "./components/UserContext";
+import { useCookies, withCookies } from "react-cookie";
+import { useEffect, useState } from "react";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -29,15 +31,16 @@ const MenuStyle = {
   fontWeight: "bold",
 };
 
-//const LogoutButton = styled.button``;
-
 const App = () => {
-  /*
-  const account = useUserCurrent();
-  const onLogout = () => {
-    account.current = undefined;
-  };
-  */
+  const [cookies, removeCookie] = useCookies(["user"]);
+  const [hasCookie, setHasCookie] = useState(false);
+
+  useEffect(() => {
+    if (cookies.user && cookies.user !== "undefined") {
+      setHasCookie(true);
+    }
+  }, [cookies]);
+
   return (
     <TodoProvider>
       <UserProvider>
@@ -49,26 +52,26 @@ const App = () => {
             </Link>
           </Menu>
           <Menu>
-            {/*!!account && !!account.current ? (
-              <LogoutButton onClick={onLogout} style={MenuStyle}>
-                Logout
-              </LogoutButton>
-            ) : (
-              <Link to="/login" style={MenuStyle}>
-                Login
-              </Link>
-            )
-            동작 안해서 로그아웃 메뉴 관련은 임시로 주석 처리
-            */}
             <Link to="/login" style={MenuStyle}>
-              Login
+              {hasCookie ? "Logout" : "Login"}
             </Link>
           </Menu>
         </MenuTemplate>
         <TodoTemplate>
           <Routes>
             <Route path="/" element={<Main />} />
-            <Route path="/login" element={<Login />} />
+            <Route
+              path="/login"
+              element={
+                <LoginForm
+                  setHasCookie={setHasCookie}
+                  removeCookie={() => {
+                    removeCookie("user");
+                    setHasCookie(false);
+                  }}
+                />
+              }
+            />
           </Routes>
         </TodoTemplate>
       </UserProvider>
@@ -76,4 +79,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default withCookies(App);

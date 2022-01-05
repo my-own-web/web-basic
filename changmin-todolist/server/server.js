@@ -8,7 +8,7 @@ const todoRouter = require("./routes/todo");
 const userRouter = require("./routes/user");
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 
 app.use("/todo", todoRouter);
