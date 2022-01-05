@@ -56,6 +56,8 @@ exports.createToken = async (req, res) => {
 };
 
 exports.createNewUser = async (req, res) => {
+  console.log(req.body);
+
   const pool = connectDB();
   const conn = await pool.getConnection();
 
@@ -72,6 +74,25 @@ exports.createNewUser = async (req, res) => {
     } else {
       res.send("USER_EXISTS");
     }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  } finally {
+    conn.release();
+  }
+};
+
+exports.removeUser = async (req, res) => {
+  console.log(req.body);
+
+  const pool = connectDB();
+  const conn = await pool.getConnection();
+
+  try {
+    await conn.query(
+      `DELETE FROM user WHERE username = '${req.body.username}'`
+    );
+    res.send("OK");
   } catch (err) {
     console.log(err);
     res.sendStatus(500);
