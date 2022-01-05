@@ -1,38 +1,42 @@
-import axios from 'axios';
-import React, {useReducer, createContext, useContext, useRef, useState, useEffect} from 'react';
+import React, {useReducer, createContext, useContext, useRef} from 'react';
 
-async function postTodos (action) {
-    try{
-    await axios.post('http://localhost:3001/todos', action);
-    } catch(error){
-        console.log(error);
-    }
-}
+const initialTodos = [
+    {
+        id: 1,
+        text: '프로젝트 생성하기',
+        done: true
+      },
+      {
+        id: 2,
+        text: '컴포넌트 스타일링하기',
+        done: true
+      },
+      {
+        id: 3,
+        text: 'Context 만들기',
+        done: false
+      },
+      {
+        id: 4,
+        text: '기능 구현하기',
+        done: false
+      }
+];
 
 // state: Todos 배열
 function todoReducer(state, action){ 
-    let newTodos;
     switch(action.type){
-        case 'SET':
-            console.log('setting newTodos'); // dbg
-            return action.newTodos;
         case 'CREATE':
-            newTodos=state.concat(action.todo);
-            break;
+            return state.concat(action.todo);
         case 'TOGGLE':
-            newTodos=state.map(todo => todo.id === action.id? {...todo, done: !todo.done} : todo );
-            break;
+            return state.map(todo => todo.id === action.id? {...todo, done: !todo.done} : todo );
         case 'REMOVE':
-            newTodos=state.filter(todo => todo.id !== action.id);
-            break;
+            return state.filter(todo => todo.id !== action.id);
         case 'EDIT':
-            newTodos=state.map(todo => todo.id===action.id?{...todo, text: action.text} : todo);
-            break;
+            return state.map(todo => todo.id===action.id?{...todo, text: action.text} : todo);
         default:
             throw new Error(`Unhandled action type: ${action.type}`);
     }
-    postTodos(action);
-    return newTodos;
 }
 
 // state, dispatch 각각 다른 Context에 넣음. dispatch만 필요한 컴포넌트에서 불필요한 렌더링 방지 위함.
@@ -42,29 +46,8 @@ const TodoNextIdContext = createContext();
 
 // 상태 관리 컴포넌트 내보내기
 export function TodoProvider({children}){ 
-    const [state, dispatch] = useReducer(todoReducer, []);
-    const nextID = useRef(0);
-    
-    async function fetchInitialTodos() {
-        try {
-            const {data} = await axios.get('http://localhost:3001/todos');
-            dispatch({
-                type: 'SET',
-                newTodos: data.todos
-            });
-            nextID.current = data.nextID;
-            console.log('fetchInitialTodos: ', data.todos, nextID);
-
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // 한 번만 실행 -> 첫 렌더링에서만 실행(+f5)
-    useEffect(()=>{
-        fetchInitialTodos();
-    },[]);
-
+    const [state, dispatch] = useReducer(todoReducer, initialTodos);
+    const nextID = useRef(5);
 
     return (
         <TodoStateContext.Provider value={state}>

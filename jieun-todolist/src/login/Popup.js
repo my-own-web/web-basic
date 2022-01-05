@@ -13,7 +13,7 @@ const DarkBackground =styled.div`
 `;
 
 const PopupBox = styled.div`
-    // color: red;
+    color: red;
     background: red;
     width: auto;
 
