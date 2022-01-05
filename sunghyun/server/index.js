@@ -150,6 +150,47 @@ app.post("/signup", async(req, res)=>{
   }
 })
 
+const verifyPasswordWithEncrypted=async (givenPassword, encryptedPasswordWithSalt)=>{
+  const [salt, encryptedPassword] = encryptedPasswordWithSalt.split("$");
+  const givenPasswordEncrypted = pbkdf2Sync(givenPassword, salt, 65536, 32, "sha512").toString("hex");
+  console.log(encryptedPassword, givenPasswordEncrypted);
+  if (givenPasswordEncrypted === encryptedPassword) {
+    return 1;
+  }
+  else {
+    return 0;
+  }
+}
+
+app.post("/login/verify", async (req, res)=>{
+  console.log(req.body);
+  const {username:usernameInput, password:passwordInput}=req.body;
+  //loginInput에 담겨 전송된 비밀번호는 평문 상태
+  console.log(usernameInput, passwordInput);
+  const pool=todoListDBConnection();
+  const conn=await pool.getConnection();
+
+  try{
+    const [rows]=await conn.query("select * from userinfo where username=?", usernameInput);
+    console.log(rows);
+    const sameUsernameInfo=rows[0];
+    const result=await verifyPasswordWithEncrypted(passwordInput, sameUsernameInfo.password)
+    console.log(result);
+    if(result){
+      //같은 비밀번호임
+      res.sendStatus(200);
+    }
+    else{
+      res.sendStatus(206);
+    }
+  } catch(err){
+    throw err;
+  } finally {
+    conn.release();
+  }
+
+})
+
 app.listen(port, (req, res)=>{
   console.log(`server port 8000`);
 });

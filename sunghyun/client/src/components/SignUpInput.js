@@ -39,6 +39,11 @@ const SignUpInput=()=>{
     else{
       try{
         await axios.post("http://localhost:8000/signup", userSignUpInput);
+        setUserSignUpInput({
+          username:'',
+          password:'',
+          verifypassword:''
+        })
       } catch(err){
         console.log(err);
       }
