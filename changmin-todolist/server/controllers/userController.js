@@ -45,11 +45,11 @@ exports.createToken = async (req, res) => {
       });
       res.send("OK");
     } else {
-      res.status(400).send("USER_NOT_FOUND");
+      res.send("USER_NOT_FOUND");
     }
   } catch (err) {
     console.log(err);
-    res.status(500).send("INTERNAL_ERROR");
+    res.sendStatus(500);
   } finally {
     conn.release();
   }
@@ -70,7 +70,7 @@ exports.createNewUser = async (req, res) => {
       );
       res.send("OK");
     } else {
-      res.status(400).send("USER_EXISTS");
+      res.send("USER_EXISTS");
     }
   } catch (err) {
     console.log(err);
