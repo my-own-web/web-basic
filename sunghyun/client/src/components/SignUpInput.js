@@ -5,7 +5,7 @@ import InputPositioner from "./InputPositioner";
 import Input from "./Input";
 import LoginButton from "./LoginButton";
 import styled from "styled-components";
-import {pbkdf2Sync} from "crypto";
+import axios from "axios";
 
 const ConstraintInfo=styled.h5`
   margin:0;
@@ -26,7 +26,7 @@ const SignUpInput=()=>{
     });
   }
 
-  const onSubmit=()=>{
+  const onSubmit=async ()=>{
     if(userSignUpInput.username==='' || userSignUpInput.password===''){
       alert('아이디와 비밀번호를 1자 이상 입력해 주세요.');
     }
@@ -37,8 +37,11 @@ const SignUpInput=()=>{
       alert('확인을 위해 입력한 비밀번호가 다릅니다.');
     }
     else{
-      const cryptedUsername=pbkdf2Sync(userSignUpInput.username, "salt", 65536, 32, "sha512").toString("hex");
-      console.log(cryptedUsername);
+      try{
+        await axios.post("http://localhost:8000/signup", userSignUpInput);
+      } catch(err){
+        console.log(err);
+      }
     }
   }
 

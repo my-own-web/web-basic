@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mysql from 'mysql2/promise';
+import {pbkdf2Sync, randomBytes} from 'crypto';
 
 const app=express();
 const port=8000;
@@ -124,9 +125,24 @@ app.post("/signup", async(req, res)=>{
   const pool=todoListDBConnection();
   const conn=await pool.getConnection();
 
+  //console.log(pbkdf2Sync(newUser.password, "salt", 65536, 32, 'sha512').toString('hex'));
+
   try{
-    await conn.query("insert into userinfo (username, password) values(?,?)", [newUser.username, newUser.password]);
-    res.sendStatus(200);
+    const [rows]=await conn.query("select * from userinfo where username=?", newUser.username);
+    //중복 아이디인지 체크
+    //console.log(rows);
+    if(rows.length){
+      //같은 유저네임을 가진 데이터가 있는 것이므로 중복된 유저네임이 존재
+      console.log(rows);
+      res.send(rows);
+    } else{
+      const randomSalt=randomBytes(32).toString('hex');
+      const cryptedPassword=pbkdf2Sync(newUser.password, randomSalt, 65536, 32, 'sha512').toString('hex');
+      const passwordWithSalt=randomSalt+"$"+cryptedPassword;
+      console.log(passwordWithSalt);
+      await conn.query("insert into userinfo (username, password) values(?,?)", [newUser.username, passwordWithSalt]);
+      res.sendStatus(200);
+    }
   } catch(err){
     throw err;
   } finally {
