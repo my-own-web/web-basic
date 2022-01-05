@@ -5,12 +5,14 @@ import reportWebVitals from './reportWebVitals';
 import { Route, Routes, BrowserRouter } from 'react-router-dom'
 import LoginPage from './LoginPage';
 import TodoPage from './TodoPage';
+import JoinPage from './JoinPage';
 
 ReactDOM.render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<LoginPage />} />
       <Route path="/todolist" element={<TodoPage />} />
+      <Route path="/join" element={<JoinPage />} />
     </Routes>
   </BrowserRouter>,
   document.getElementById('root')
