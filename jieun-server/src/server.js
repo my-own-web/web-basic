@@ -1,10 +1,9 @@
 const express = require('express');
-const router = express.Router();
 const app = express();
 const port = 3001;
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { useState } = require('react/cjs/react.production.min');
+const {pbkdf2, pbkdf2Sync} = require('crypto');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
@@ -12,6 +11,8 @@ app.use(bodyParser.json());
 
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv').config();
+
+const salt = process.env.SECRET_KEY;
 
 const options = {
   host: process.env.MYSQL_HOST,
@@ -29,11 +30,15 @@ function DB_Connection() {
 
 app.post('/login', async (req, res) => {
   const inputs = req.body;
+
+  const cryptedId = pbkdf2Sync(inputs.id,salt,65000, 32, "sha512").toString("hex");
+  const cryptedPassword = pbkdf2Sync(inputs.password,salt,65000, 32, "sha512").toString("hex");
+
   const pool = DB_Connection();
   const conn = await pool.getConnection();
 
   try{
-    const [row] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE id='${inputs.id}' AND password='${inputs.password}'`);
+    const [row] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE id='${cryptedId}' AND password='${cryptedPassword}'`);
     console.log(row[0]);
     if(row[0].num) res.send(true);
     else res.send(false);
@@ -47,13 +52,17 @@ app.post('/login', async (req, res) => {
 
 app.post('/join', async (req, res) => {
   const inputs = req.body;
+
+  const cryptedId = pbkdf2Sync(inputs.newId,salt,65000, 32, "sha512").toString("hex");
+  const cryptedPassword = pbkdf2Sync(inputs.newPassword,salt,65000, 32, "sha512").toString("hex");
+
   const pool = DB_Connection();
   const conn = await pool.getConnection();
 
   try{
-    const [exist] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE id='${inputs.newId}'`);
+    const [exist] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE id='${cryptedId}'`);
     if(exist[0].num < 1){
-      await conn.query(`INSERT INTO users(id, password) VALUES ('${inputs.newId}', '${inputs.newPassword}')`);
+      await conn.query(`INSERT INTO users(id, password) VALUES ('${cryptedId}', '${cryptedPassword}')`);
       res.send(true);
     }
     else{
