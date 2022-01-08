@@ -1,7 +1,10 @@
+import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
-import { useAccountCurrent, useAccountState } from "./AccountContext";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const LoginFormBlock = styled.form`
   flex: 1;
@@ -61,14 +64,12 @@ const Input = styled.input`
   box-sizing: border-box;
 `;
 
-function LoginForm() {
+function LoginForm({ currentUsername, setCurrentUsername }) {
   const [inputs, setInputs] = useState({
     username: "",
     password: "",
   });
   const { username, password } = inputs; // 입력받은 username / password
-  const account = useAccountCurrent(); // 현재 로그인된 계정
-  const accounts = useAccountState(); // 현재 등록되어 있는 계정들
   const usernameInput = useRef(); // Username 입력 focus 위해 사용
   const passwordInput = useRef(); // Password 입력 focus 위해 사용
   const navigate = useNavigate(); // 로그인 성공 후 navigate 위해 사용
@@ -81,7 +82,7 @@ function LoginForm() {
     });
   };
 
-  const onSubmit = (e) => {
+  const onLoginSubmit = (e) => {
     e.preventDefault();
     if (!username) {
       alert("Username을 입력해주세요.");
@@ -94,36 +95,135 @@ function LoginForm() {
       return;
     }
 
-    account.current = accounts.find(
-      (e) => e.username === username && e.password === password
-    );
-    if (!account.current) {
-      alert("Username 또는 Password가 올바르지 않습니다.");
+    async function checkUser() {
+      await axios
+        .post("http://localhost:3001/user/login", inputs, {
+          withCredentials: true,
+        })
+        .then((res) => {
+          switch (res.data) {
+            case "OK":
+              setCurrentUsername(username);
+              alert(`성공적으로 로그인되었습니다. 안녕하세요, ${username}님!`);
+              navigate("/");
+              break;
+            case "USER_NOT_FOUND":
+              alert("Username 또는 Password가 올바르지 않습니다.");
 
-      // password input field 초기화
-      setInputs({ ...inputs, password: "" });
+              // password input field 초기화
+              setInputs({ ...inputs, password: "" });
 
-      // password field에 focus
-      passwordInput.current.focus();
-    } else {
-      alert(`성공적으로 로그인되었습니다. 안녕하세요, ${username}님!`);
-      navigate("/");
+              // password field에 focus
+              passwordInput.current.focus();
+              break;
+            default:
+              alert("알 수 없는 오류가 발생했습니다.");
+              break;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("알 수 없는 오류가 발생했습니다.");
+        });
     }
+    checkUser();
   };
 
-  const onLogout = () => {
-    account.current = undefined;
+  const onRegisterSubmit = (e) => {
+    e.preventDefault();
+    if (!username) {
+      alert("Username을 입력해주세요.");
+      usernameInput.current.focus();
+      return;
+    }
+    if (!password) {
+      alert("Password를 입력해주세요.");
+      passwordInput.current.focus();
+      return;
+    }
+
+    async function checkUser() {
+      await axios
+        .post("http://localhost:3001/user/register", inputs)
+        .then((res) => {
+          switch (res.data) {
+            case "OK":
+              alert(
+                `${username} 계정을 성공적으로 생성하였습니다. 다시 로그인해주세요.`
+              );
+
+              // username과 password input field 초기화
+              setInputs({ username: "", password: "" });
+
+              // username field에 focus
+              usernameInput.current.focus();
+              break;
+            case "USER_EXISTS":
+              alert(`${username} 계정이 이미 존재합니다.`);
+
+              // password input field 초기화
+              setInputs({ ...inputs, password: "" });
+
+              // password field에 focus
+              passwordInput.current.focus();
+              break;
+            default:
+              alert("알 수 없는 오류가 발생했습니다.");
+              break;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("알 수 없는 오류가 발생했습니다.");
+        });
+    }
+    checkUser();
+  };
+
+  const onLogout = (e) => {
+    e.preventDefault();
+    setCurrentUsername(undefined);
+    cookies.remove("user");
 
     alert("로그아웃되었습니다.");
     navigate("/");
   };
 
-  if (!!account.current) {
+  const onUnregister = (e) => {
+    e.preventDefault();
+    async function checkUser() {
+      await axios
+        .post("http://localhost:3001/user/unregister", {
+          username: currentUsername,
+        })
+        .then((res) => {
+          switch (res.data) {
+            case "OK":
+              alert(`${username} 계정을 성공적으로 삭제하였습니다.`);
+              navigate("/");
+              break;
+            default:
+              alert("알 수 없는 오류가 발생했습니다.");
+              break;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("알 수 없는 오류가 발생했습니다.");
+        });
+      setCurrentUsername(undefined);
+      cookies.remove("user");
+    }
+    checkUser();
+  };
+
+  if (!!currentUsername) {
     // 로그인 된 화면
     return (
       <LoginFormBlock>
-        <h1>안녕하세요, {account.current.username}님!</h1>
+        <h1>안녕하세요, {currentUsername}님!</h1>
         <button onClick={onLogout}>로그아웃</button>
+        <button onClick={onUnregister}>회원탈퇴</button>
       </LoginFormBlock>
     );
   }
@@ -153,7 +253,8 @@ function LoginForm() {
           ref={passwordInput}
         />
       </div>
-      <button onClick={onSubmit}>로그인</button>
+      <button onClick={onLoginSubmit}>로그인</button>
+      <button onClick={onRegisterSubmit}>회원가입</button>
     </LoginFormBlock>
   );
 }
