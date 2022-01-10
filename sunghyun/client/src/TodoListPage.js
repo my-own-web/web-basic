@@ -36,7 +36,6 @@ function TodoListPage() {
 
   const onToggle=async (id)=>{
     try{
-      console.log(id);
       await axios.post("http://localhost:8000/todo/toggle", {id:id});
       await fetchServerTodoList();
     } catch (err){

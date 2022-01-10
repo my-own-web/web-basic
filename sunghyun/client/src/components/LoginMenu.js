@@ -1,13 +1,19 @@
 import React from "react";
 import {RowContainer} from "./Container";
 import LoginButton from "./LoginButton";
+import {useNavigate} from "react-router-dom";
 
 const LoginMenu=()=>{
+  const navigate=useNavigate();
+
+  const signupClick=()=>{
+    navigate("/signup");
+  }
+
   return (
     <RowContainer>
-      <LoginButton width='7rem' height='3rem' background='white' color='gray'>아이디찾기</LoginButton>
-      <LoginButton width='8rem' height='3rem' background='white' color='gray'>비밀번호찾기</LoginButton>
-      <LoginButton width='7rem' height='3rem' background='white' color='gray'>회원가입</LoginButton>
+      <h2>아이디가 없으신가요?</h2>
+      <LoginButton width='7rem' height='3rem' background='white' color='gray' onClick={signupClick}>회원가입</LoginButton>
     </RowContainer>
   );
 }

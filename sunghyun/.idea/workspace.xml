@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="9edecb95-6ea1-400a-ad1c-b3bad67596b0" name="Default Changelist" comment="">
+    <list default="true" id="0019cf39-7305-4b03-ae98-aff8bf4bcdea" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/LoginInput.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/LoginInput.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/SignUpInput.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/SignUpInput.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/LoginPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/LoginPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/TodoListPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/TodoListPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/LoginMenu.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/LoginMenu.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/server/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="JavaScript File" />
-      </list>
-    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -28,7 +21,7 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="22mgo86Rn1tnyJQ56iUWWE2Fw4T" />
+  <component name="ProjectId" id="23VK9BCFcXIy9UjnXNUnYL7fri2" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -38,67 +31,22 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.detected.package.tslint" value="true" />
-    <property name="node.js.path.for.package.eslint" value="project" />
-    <property name="node.js.path.for.package.tslint" value="project" />
-    <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="yarn" />
-    <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\WebStorm 2020.3.1\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="vue.rearranger.settings.migration" value="true" />
-  </component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/server" />
-    </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="9edecb95-6ea1-400a-ad1c-b3bad67596b0" name="Default Changelist" comment="" />
-      <created>1640448352514</created>
+      <changelist id="0019cf39-7305-4b03-ae98-aff8bf4bcdea" name="Changes" comment="" />
+      <created>1641813662812</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1640448352514</updated>
-      <workItem from="1640448354396" duration="444000" />
-      <workItem from="1640527645474" duration="595000" />
-      <workItem from="1640567897074" duration="6759000" />
-      <workItem from="1640591604982" duration="12635000" />
-      <workItem from="1640687766030" duration="607000" />
-      <workItem from="1640696576481" duration="11056000" />
-      <workItem from="1640846304112" duration="19000" />
-      <workItem from="1640846338646" duration="5600000" />
-      <workItem from="1640867005125" duration="4754000" />
-      <workItem from="1640911134987" duration="1908000" />
-      <workItem from="1640925981814" duration="4869000" />
-      <workItem from="1640945868871" duration="9505000" />
-      <workItem from="1640963543492" duration="195000" />
-      <workItem from="1641015063092" duration="1817000" />
-      <workItem from="1641024774012" duration="21424000" />
-      <workItem from="1641093842719" duration="2764000" />
-      <workItem from="1641113967305" duration="599000" />
-      <workItem from="1641125845070" duration="7023000" />
-      <workItem from="1641280404085" duration="1311000" />
-      <workItem from="1641301351483" duration="3242000" />
-      <workItem from="1641343963524" duration="2690000" />
-      <workItem from="1641371759068" duration="9429000" />
+      <updated>1641813662812</updated>
+      <workItem from="1641813664309" duration="649000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
 </project>

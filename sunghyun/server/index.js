@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import session from 'express-session';
 import dotenv from 'dotenv';
 import mysql from 'mysql2/promise';
 import {pbkdf2Sync, randomBytes} from 'crypto';
@@ -11,6 +12,11 @@ const port=8000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+app.use(session({
+  secret:'sunghyun',
+  resave:false,
+  saveUninitialized:true
+}));
 
 dotenv.config();
 
@@ -37,7 +43,6 @@ function todoListDBConnection(){
   }
   return todoListPool;
 }
-
 
 app.get("/todo/all", async (req, res)=>{
   const pool=todoListDBConnection();
@@ -75,7 +80,6 @@ app.post("/todo/create", async (req, res)=>{
 
 app.post("/todo/toggle", async (req, res)=>{
   const data=req.body;
-  console.log(data);
   const pool=todoListDBConnection();
   const conn=await pool.getConnection();
   try{

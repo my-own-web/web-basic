@@ -12,21 +12,6 @@ const GlobalStyle=createGlobalStyle`
 `;
 
 const LoginPage=()=>{
-  /*const fetchData=async ()=>{
-    try{
-      const res=await axios.get('http://localhost:8000');
-      //서버에서 데이터 가져올땐 async/await 사용 필수
-      console.log(res.data);
-    }
-    catch(err){
-      //에러 핸들링 필수
-      console.log(err);
-    }
-
-  }
-  useEffect(()=>{
-    fetchData();
-  }, []);*/
 
   return (
     <PageTemplateBlock height='650px'>
