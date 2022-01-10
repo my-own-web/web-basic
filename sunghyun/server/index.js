@@ -15,7 +15,7 @@ app.use(express.urlencoded({extended:true}));
 app.use(session({
   secret:'sunghyun',
   resave:false,
-  saveUninitialized:true
+  saveUninitialized:false
 }));
 
 dotenv.config();
@@ -82,6 +82,7 @@ app.post("/todo/toggle", async (req, res)=>{
   const data=req.body;
   const pool=todoListDBConnection();
   const conn=await pool.getConnection();
+  console.log(req.session);
   try{
     await conn.query("update todolist set done=1-done where id=?", data.id);
     res.sendStatus(200);
@@ -176,23 +177,35 @@ app.post("/login/verify", async (req, res)=>{
 
   try{
     const [rows]=await conn.query("select * from userinfo where username=?", usernameInput);
-    console.log(rows);
     const sameUsernameInfo=rows[0];
     const result=await verifyPasswordWithEncrypted(passwordInput, sameUsernameInfo.password)
-    console.log(result);
     if(result){
       //같은 비밀번호임
-      res.sendStatus(200);
+      console.log(sameUsernameInfo.id);
+      req.session.curUserId=sameUsernameInfo.id;
+      console.log(req.session);
+      req.session.save();
+      res.send({id:sameUsernameInfo.id});
+      //로그인 성공시 그 유저의 id를 response 로 전송
     }
     else{
-      res.sendStatus(206);
+      res.send({id:0});
+      //userid가 0인 경우는 없으므로 이 경우는 로그인 실패와 같다
     }
   } catch(err){
     throw err;
   } finally {
     conn.release();
   }
+});
 
+app.post("/login/check", (req, res)=>{
+  if(req.session.curUserId){
+    res.send({loggedIn:true, curUserId:req.session.curUserId});
+  }
+  else{
+    res.send({loggedIn:false});
+  }
 })
 
 app.listen(port, (req, res)=>{

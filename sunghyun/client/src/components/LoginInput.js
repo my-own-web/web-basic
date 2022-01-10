@@ -23,8 +23,9 @@ const LoginInput=()=>{
   }
 
   const onSubmit=async ()=>{
-    const {status}=await axios.post("http://localhost:8000/login/verify", userLoginInput);
-    if(status===200){
+    const {data:curUser}=await axios.post("http://localhost:8000/login/verify", userLoginInput);
+    console.log(curUser);
+    if(curUser.id){
       alert("로그인 성공!");
     }
     else{
