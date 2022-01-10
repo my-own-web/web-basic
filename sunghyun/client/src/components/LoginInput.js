@@ -22,10 +22,13 @@ const LoginInput=()=>{
     //console.log(userInput);
   }
 
-  const onSubmit=async ()=>{
+  const onSubmit=async (e)=>{
+    e.preventDefault();
     const {data:curUser}=await axios.post("http://localhost:8000/login/verify", userLoginInput);
     console.log(curUser);
     if(curUser.id){
+      window.sessionStorage.setItem('curUserId', curUser.id);
+      console.log(window.sessionStorage.getItem('curUserId'));
       alert("로그인 성공!");
     }
     else{
@@ -38,17 +41,19 @@ const LoginInput=()=>{
   };
 
   return (
-    <ColumnContainer>
-      <InputInfo>USERNAME</InputInfo>
-      <InputPositioner>
-        <Input name='username' value={userLoginInput.username} onChange={onChange}/>
-      </InputPositioner>
-      <InputInfo>PASSWORD</InputInfo>
-      <InputPositioner>
-        <Input type="password" name='password' value={userLoginInput.password} onChange={onChange} />
-      </InputPositioner>
-      <LoginButton width='8rem' height='3rem' background='#da77f2' onClick={onSubmit}>로그인</LoginButton>
-    </ColumnContainer>
+    <form onSubmit={onSubmit}>
+      <ColumnContainer>
+        <InputInfo>USERNAME</InputInfo>
+        <InputPositioner>
+          <Input name='username' value={userLoginInput.username} onChange={onChange}/>
+        </InputPositioner>
+        <InputInfo>PASSWORD</InputInfo>
+        <InputPositioner>
+          <Input type="password" name='password' value={userLoginInput.password} onChange={onChange} />
+        </InputPositioner>
+        <LoginButton width='8rem' height='3rem' background='#da77f2'>로그인</LoginButton>
+      </ColumnContainer>
+    </form>
   );
 }
 

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const InputPositioner=styled.form`
+const InputPositioner=styled.div`
   padding: 12px 0 12px 0;
   background: #ffffff;
   border-bottom-left-radius: 16px;

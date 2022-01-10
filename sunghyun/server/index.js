@@ -177,20 +177,27 @@ app.post("/login/verify", async (req, res)=>{
 
   try{
     const [rows]=await conn.query("select * from userinfo where username=?", usernameInput);
-    const sameUsernameInfo=rows[0];
-    const result=await verifyPasswordWithEncrypted(passwordInput, sameUsernameInfo.password)
-    if(result){
-      //같은 비밀번호임
-      console.log(sameUsernameInfo.id);
-      req.session.curUserId=sameUsernameInfo.id;
-      console.log(req.session);
-      req.session.save();
-      res.send({id:sameUsernameInfo.id});
-      //로그인 성공시 그 유저의 id를 response 로 전송
+
+    if(rows.length){
+      const sameUsernameInfo=rows[0];
+      const result=await verifyPasswordWithEncrypted(passwordInput, sameUsernameInfo.password)
+      if(result){
+        //같은 비밀번호임
+        console.log(sameUsernameInfo.id);
+        req.session.curUserId=sameUsernameInfo.id;
+        console.log(req.session);
+        req.session.save((err)=>{console.log(err);});
+        res.send({id:sameUsernameInfo.id});
+        //로그인 성공시 그 유저의 id를 response 로 전송
+      }
+      else{
+        res.send({id:0});
+        //아이디가 같은 유저는 있으나 패스워드가 틀렸다
+      }
     }
     else{
       res.send({id:0});
-      //userid가 0인 경우는 없으므로 이 경우는 로그인 실패와 같다
+      //아이디가 같은 유저조차도 없다
     }
   } catch(err){
     throw err;
