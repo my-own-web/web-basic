@@ -68,11 +68,19 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
   const [inputs, setInputs] = useState({
     username: "",
     password: "",
+    passwordCheck: "",
   });
-  const { username, password } = inputs; // 입력받은 username / password
+  const { username, password, passwordCheck } = inputs; // 입력받은 username / password / passwordCheck
   const usernameInput = useRef(); // Username 입력 focus 위해 사용
   const passwordInput = useRef(); // Password 입력 focus 위해 사용
+  const passwordCheckInput = useRef(); // PasswordCheck 입력 focus 위해 사용
+  const [passwordCheckDisplay, setPasswordCheckDisplay] = useState(false); // PasswordCheck 입력 표시 여부
   const navigate = useNavigate(); // 로그인 성공 후 navigate 위해 사용
+
+  const setPasswordCheckInput = (node) => {
+    if (node) passwordCheckInput.current = node;
+    passwordCheckInput.current.focus();
+  };
 
   const onChange = (e) => {
     const { value, name } = e.target;
@@ -141,6 +149,7 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
       passwordInput.current.focus();
       return;
     }
+
     if (username.length < 8 || username.length > 20) {
       alert("Username은 8~20글자만 가능합니다.");
       usernameInput.current.focus();
@@ -149,6 +158,21 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
     if (password.length < 8 || password.length > 20) {
       alert("Password는 8~20글자만 가능합니다.");
       passwordInput.current.focus();
+      return;
+    }
+
+    if (!passwordCheckDisplay) {
+      setPasswordCheckDisplay(true);
+      return;
+    }
+    if (!passwordCheck) {
+      alert("Password Check를 입력해주세요.");
+      passwordCheckInput.current.focus();
+      return;
+    }
+    if (password !== passwordCheck) {
+      alert("Password와 Password Check이 다릅니다.");
+      passwordCheckInput.current.focus();
       return;
     }
 
@@ -162,20 +186,17 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
                 `${username} 계정을 성공적으로 생성하였습니다. 다시 로그인해주세요.`
               );
 
-              // username과 password input field 초기화
-              setInputs({ username: "", password: "" });
+              setInputs({ username: "", password: "", passwordCheck: "" });
 
-              // username field에 focus
+              setPasswordCheckDisplay(false);
               usernameInput.current.focus();
               break;
             case "USER_EXISTS":
               alert(`${username} 계정이 이미 존재합니다.`);
 
-              // password input field 초기화
-              setInputs({ ...inputs, password: "" });
+              setInputs({ ...inputs, password: "", passwordCheck: "" });
 
-              // password field에 focus
-              passwordInput.current.focus();
+              usernameInput.current.focus();
               break;
             default:
               alert("알 수 없는 오류가 발생했습니다.");
@@ -263,6 +284,19 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
           ref={passwordInput}
         />
       </div>
+      {passwordCheckDisplay && (
+        <div>
+          Password:{" "}
+          <Input
+            type="password"
+            name="passwordCheck"
+            value={passwordCheck}
+            onChange={onChange}
+            placeholder="Password Check"
+            ref={setPasswordCheckInput}
+          />
+        </div>
+      )}
       <button onClick={onLoginSubmit}>로그인</button>
       <button onClick={onRegisterSubmit}>회원가입</button>
     </LoginFormBlock>
