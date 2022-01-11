@@ -37,7 +37,7 @@ function LoginPage() {
         } catch(err){
             console.log(err);
             alert('Wrong ID or PASSWORD'); 
-            // cookies.remove('valid');
+            // cookies.remove('valid'); // 서버에서 쿠키 삭제
         } 
         setInputs({ id: '', password: '' });
     };
