@@ -1,9 +1,11 @@
 import axios from 'axios';
 import React, {useReducer, createContext, useContext, useRef, useState, useEffect} from 'react';
+import Cookies, {useCookies} from 'universal-cookie';
+import { useNavigate } from 'react-router-dom';
 
-async function postTodos (action) {
+async function postTodos (action) {    
     try{
-    await axios.post('http://localhost:3001/todos', action);
+    await axios.post('http://localhost:3001/todos', action, {withCredentials: true});
     } catch(error){
         console.log(error);
     }
@@ -14,7 +16,6 @@ function todoReducer(state, action){
     let newTodos;
     switch(action.type){
         case 'SET':
-            console.log('setting newTodos'); // dbg
             return action.newTodos;
         case 'CREATE':
             newTodos=state.concat(action.todo);
@@ -44,19 +45,21 @@ const TodoNextIdContext = createContext();
 export function TodoProvider({children}){ 
     const [state, dispatch] = useReducer(todoReducer, []);
     const nextID = useRef(0);
+
+    let navigate = useNavigate();
     
     async function fetchInitialTodos() {
         try {
-            const {data} = await axios.get('http://localhost:3001/todos');
+            const {data} = await axios.get('http://localhost:3001/todos',{withCredentials: true});
             dispatch({
                 type: 'SET',
                 newTodos: data.todos
             });
             nextID.current = data.nextID;
-            console.log('fetchInitialTodos: ', data.todos, nextID);
-
         } catch (error) {
             console.log(error);
+            alert("잘못된 사용자 정보입니다.")
+            navigate("/");
         }
     };
 

@@ -4,10 +4,16 @@ const port = 3001;
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const {pbkdf2, pbkdf2Sync} = require('crypto');
+const Cookies = require('universal-cookie');
+const cookieParser = require('cookie-parser');
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true // 크로스 도메인 허용
+}));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv').config();
@@ -40,8 +46,16 @@ app.post('/login', async (req, res) => {
   try{
     const [row] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE id='${cryptedId}' AND password='${cryptedPassword}'`);
     console.log(row[0]);
-    if(row[0].num) res.send(true);
-    else res.send(false);
+    if(row[0].num) {
+      res.cookie('valid', 'valid',{
+        path: '/',
+        maxAge: 1000 // 1초 후 만료
+      });
+      res.send(true);
+    }
+    else {
+      res.status(400).send(false);
+    }
   } catch(error){
     console.log(error);
   } finally{
@@ -128,21 +142,32 @@ app.post('/todos', async (req, res) => {
 });
 
 app.get('/todos', async (req, res) => {
-  const pool = DB_Connection();
-  const conn = await pool.getConnection();
+ 
 
-  try {
-    const [rows] = await conn.query('SELECT * FROM todos');
-    todos = rows;
-    const [col] = await conn.query(`SELECT MAX(id) AS maxID FROM todos`);
-    console.log({todos, nextID: col[0].maxID+1});
-    res.send({todos, nextID: col[0].maxID+1});
-
-  } catch (error) {
-    console.log(error);
-  } finally {
-    conn.release();
+  // const cookies = new Cookies(req.headers.cookie);
+  // console.log("todos 받은 쿠키:",cookies.get('valid'));
+  console.log('cookies:', req.cookies);
+  if(req.cookies.valid){
+    const pool = DB_Connection();
+    const conn = await pool.getConnection();
+    try {
+      const [rows] = await conn.query('SELECT * FROM todos');
+      todos = rows;
+      const [col] = await conn.query(`SELECT MAX(id) AS maxID FROM todos`);
+      console.log({todos, nextID: col[0].maxID+1});
+      res.send({todos, nextID: col[0].maxID+1});
+  
+    } catch (error) {
+      console.log(error);
+    } finally {
+      conn.release();
+    }
   }
+  else{
+    res.status(400).send('invalid');
+  }
+
+  
 });
 
 app.listen(port, () => {
