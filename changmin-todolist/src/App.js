@@ -1,6 +1,6 @@
 import Main from "./Main";
 import styled, { createGlobalStyle } from "styled-components";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 import TodoTemplate from "./components/TodoTemplate";
 import LoginForm from "./components/LoginForm";
 import MenuTemplate from "./components/MenuTemplate";
@@ -34,7 +34,7 @@ const MenuStyle = {
 };
 
 const App = () => {
-  const [currentUsername, setCurrentUsername] = useState();
+  const [currentUsername, setCurrentUsername] = useState(undefined);
 
   async function verifyToken() {
     await axios
@@ -46,6 +46,7 @@ const App = () => {
       })
       .catch((err) => {
         console.log("Invalid token, removing the cookie");
+        setCurrentUsername(null);
         cookies.remove("user");
       });
   }
@@ -72,7 +73,12 @@ const App = () => {
       </MenuTemplate>
       <TodoTemplate>
         <Routes>
-          <Route path="/" element={<Main />} />
+          <Route
+            path="/"
+            element={
+              currentUsername !== null ? <Main /> : <Navigate to="/login" />
+            }
+          />
           <Route
             path="/login"
             element={

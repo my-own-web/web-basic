@@ -213,7 +213,7 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
 
   const onLogout = (e) => {
     e.preventDefault();
-    setCurrentUsername(undefined);
+    setCurrentUsername(null);
     cookies.remove("user");
 
     alert("로그아웃되었습니다.");
@@ -242,7 +242,7 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
           console.log(err);
           alert("알 수 없는 오류가 발생했습니다.");
         });
-      setCurrentUsername(undefined);
+      setCurrentUsername(null);
       cookies.remove("user");
     }
     checkUser();
