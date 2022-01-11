@@ -15,13 +15,6 @@ function LoginPage() {
         password: ''
     });
     
-    const [valid, setValid] = useState(false);
-    useEffect(()=>{
-        if(valid){
-            navigate("/todolist");
-        }
-    }, [valid]);
-
     const onChange = (e) => {
         const { value, name } = e.target;
         setInputs({
@@ -38,19 +31,13 @@ function LoginPage() {
         try{
             const res = await axios.post('http://localhost:3001/login', inputs, {withCredentials: true});
             // 크로스 도메인 쿠키 허용
-            setValid(res.data);
             console.log('쿠키:',cookies.get('valid')); // dbg
             console.log('res.data:', res.data);
-
-            if(res.data){
-                
-            }
-            else{
-                alert('Wrong ID or PASSWORD'); 
-                cookies.remove('valid');
-            }
+            navigate("/todolist");
         } catch(err){
             console.log(err);
+            alert('Wrong ID or PASSWORD'); 
+            cookies.remove('valid');
         } 
         setInputs({ id: '', password: '' });
     };

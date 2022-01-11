@@ -1,40 +1,6 @@
 import axios from 'axios';
-import React, {useReducer, createContext, useContext, useRef, useState, useEffect} from 'react';
-import Cookies, {useCookies} from 'universal-cookie';
+import React, {createContext, useContext, useRef, useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-
-async function postTodos (action) {    
-    try{
-    await axios.post('http://localhost:3001/todos', action, {withCredentials: true});
-    } catch(error){
-        console.log(error);
-    }
-}
-
-// state: Todos 배열
-function todoReducer(state, action){ 
-    let newTodos;
-    switch(action.type){
-        case 'SET':
-            return action.newTodos;
-        case 'CREATE':
-            newTodos=state.concat(action.todo);
-            break;
-        case 'TOGGLE':
-            newTodos=state.map(todo => todo.id === action.id? {...todo, done: !todo.done} : todo );
-            break;
-        case 'REMOVE':
-            newTodos=state.filter(todo => todo.id !== action.id);
-            break;
-        case 'EDIT':
-            newTodos=state.map(todo => todo.id===action.id?{...todo, text: action.text} : todo);
-            break;
-        default:
-            throw new Error(`Unhandled action type: ${action.type}`);
-    }
-    postTodos(action);
-    return newTodos;
-}
 
 // state, dispatch 각각 다른 Context에 넣음. dispatch만 필요한 컴포넌트에서 불필요한 렌더링 방지 위함.
 const TodoStateContext = createContext();
@@ -43,35 +9,33 @@ const TodoNextIdContext = createContext();
 
 // 상태 관리 컴포넌트 내보내기
 export function TodoProvider({children}){ 
-    const [state, dispatch] = useReducer(todoReducer, []);
+    const [todos, setTodos] = useState([]);
     const nextID = useRef(0);
-
-    let navigate = useNavigate();
     
-    async function fetchInitialTodos() {
-        try {
-            const {data} = await axios.get('http://localhost:3001/todos',{withCredentials: true});
-            dispatch({
-                type: 'SET',
-                newTodos: data.todos
-            });
-            nextID.current = data.nextID;
-        } catch (error) {
+    let navigate = useNavigate();
+
+    async function postTodos (action) {    
+        try{
+        const {data} = await axios.post('http://localhost:3001/todos', action, {withCredentials: true});
+        console.log("set to:", data.todos);
+        setTodos(data.todos);
+        nextID.current = data.nextID;
+        } catch(error){
             console.log(error);
-            alert("잘못된 사용자 정보입니다.")
-            navigate("/");
+            alert('로그인이 만료되었습니다.');
+            navigate('/');
         }
-    };
+    }
 
     // 한 번만 실행 -> 첫 렌더링에서만 실행(+f5)
     useEffect(()=>{
-        fetchInitialTodos();
+        postTodos({type: 'FETCH'});
     },[]);
 
 
     return (
-        <TodoStateContext.Provider value={state}>
-            <TodoDispatchContext.Provider value={dispatch}>
+        <TodoStateContext.Provider value={todos}>
+            <TodoDispatchContext.Provider value={postTodos}>
                 <TodoNextIdContext.Provider value={nextID}>
                     {children}
                 </TodoNextIdContext.Provider>
