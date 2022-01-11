@@ -14,7 +14,7 @@ const TodoListBlock = styled.div`
 
 function TodoList() {
   const todos = useTodoState();
-  console.log(todos); //dbg: 배열 변경 확인
+  console.log('TodoList ',todos); //dbg: 배열 변경 확인
   return <TodoListBlock>
      {todos.map(todo => (
        <TodoItem

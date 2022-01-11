@@ -110,9 +110,7 @@ function TodoItem({ id, done, text }) {
   // edit: true: text자리에 입력칸 열기
   const [edit, setEdit] = useState(false);
   const onStartEdit = () => {
-    return (
-      setEdit(!edit)
-    );
+    setEdit(!edit);
   };
 
   // 입력칸에서 엔터키 누르면 입력을 배열에 적용. 입력칸 끄기
@@ -125,7 +123,7 @@ function TodoItem({ id, done, text }) {
 
   return (
     <TodoItemBlock>
-      <CheckCircle done={done} onClick={onToggle}>{done && <MdDone />}</CheckCircle>
+      <CheckCircle done={done} onClick={onToggle}>{done? <MdDone /> : ''}</CheckCircle>
       {edit? 
       <>
       <EditInput value={input} onChange={onChange} onKeyPress={onKeyPress}/>
