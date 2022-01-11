@@ -5,9 +5,10 @@ import TodoTemplate from "./components/TodoTemplate";
 import LoginForm from "./components/LoginForm";
 import MenuTemplate from "./components/MenuTemplate";
 import { TodoProvider } from "./components/TodoContext";
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import UserContext from "./contexts/UserContext";
 
 const cookies = new Cookies();
 
@@ -34,7 +35,7 @@ const MenuStyle = {
 };
 
 const App = () => {
-  const [currentUsername, setCurrentUsername] = useState(undefined);
+  const { state, actions } = useContext(UserContext);
 
   async function verifyToken() {
     await axios
@@ -42,11 +43,11 @@ const App = () => {
         withCredentials: true,
       })
       .then((res) => {
-        setCurrentUsername(res.data);
+        actions.setUsername(res.data);
       })
       .catch((err) => {
         console.log("Invalid token, removing the cookie");
-        setCurrentUsername(null);
+        actions.setUsername(null);
         cookies.remove("user");
       });
   }
@@ -54,7 +55,7 @@ const App = () => {
   useEffect(() => {
     if (cookies.get("user") && cookies.get("user") !== "undefined")
       verifyToken();
-  }, []);
+  }, [state]);
 
   return (
     <TodoProvider>
@@ -67,7 +68,7 @@ const App = () => {
         </Menu>
         <Menu>
           <Link to="/login" style={MenuStyle}>
-            {!currentUsername ? "Login" : currentUsername}
+            {!state.username ? "Login" : state.username}
           </Link>
         </Menu>
       </MenuTemplate>
@@ -76,18 +77,10 @@ const App = () => {
           <Route
             path="/"
             element={
-              currentUsername !== null ? <Main /> : <Navigate to="/login" />
+              state.username !== null ? <Main /> : <Navigate to="/login" />
             }
           />
-          <Route
-            path="/login"
-            element={
-              <LoginForm
-                currentUsername={currentUsername}
-                setCurrentUsername={setCurrentUsername}
-              />
-            }
-          />
+          <Route path="/login" element={<LoginForm />} />
         </Routes>
       </TodoTemplate>
     </TodoProvider>

@@ -1,8 +1,9 @@
 import axios from "axios";
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
 import Cookies from "universal-cookie";
+import UserContext from "../contexts/UserContext";
 
 const cookies = new Cookies();
 
@@ -64,7 +65,8 @@ const Input = styled.input`
   box-sizing: border-box;
 `;
 
-function LoginForm({ currentUsername, setCurrentUsername }) {
+function LoginForm() {
+  const { state, actions } = useContext(UserContext);
   const [inputs, setInputs] = useState({
     username: "",
     password: "",
@@ -111,7 +113,7 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
         .then((res) => {
           switch (res.data) {
             case "OK":
-              setCurrentUsername(username);
+              actions.setUsername(username);
               alert(`성공적으로 로그인되었습니다. 안녕하세요, ${username}님!`);
               navigate("/");
               break;
@@ -213,7 +215,7 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
 
   const onLogout = (e) => {
     e.preventDefault();
-    setCurrentUsername(null);
+    actions.setUsername(null);
     cookies.remove("user");
 
     alert("로그아웃되었습니다.");
@@ -225,12 +227,12 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
     async function checkUser() {
       await axios
         .post("http://localhost:3001/user/unregister", {
-          username: currentUsername,
+          username: state.username,
         })
         .then((res) => {
           switch (res.data) {
             case "OK":
-              alert(`${username} 계정을 성공적으로 삭제하였습니다.`);
+              alert(`${state.username} 계정을 성공적으로 삭제하였습니다.`);
               navigate("/");
               break;
             default:
@@ -242,17 +244,17 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
           console.log(err);
           alert("알 수 없는 오류가 발생했습니다.");
         });
-      setCurrentUsername(null);
+      actions.setUsername(null);
       cookies.remove("user");
     }
     checkUser();
   };
 
-  if (!!currentUsername) {
+  if (state.username) {
     // 로그인 된 화면
     return (
       <LoginFormBlock>
-        <h1>안녕하세요, {currentUsername}님!</h1>
+        <h1>안녕하세요, {state.username}님!</h1>
         <button onClick={onLogout}>로그아웃</button>
         <button onClick={onUnregister}>회원탈퇴</button>
       </LoginFormBlock>
