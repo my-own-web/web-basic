@@ -141,6 +141,16 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
       passwordInput.current.focus();
       return;
     }
+    if (username.length < 8 || username.length > 20) {
+      alert("Username은 8~20글자만 가능합니다.");
+      usernameInput.current.focus();
+      return;
+    }
+    if (password.length < 8 || password.length > 20) {
+      alert("Password는 8~20글자만 가능합니다.");
+      passwordInput.current.focus();
+      return;
+    }
 
     async function checkUser() {
       await axios
