@@ -4,7 +4,6 @@ const port = 3001;
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { pbkdf2, pbkdf2Sync } = require('crypto');
-const Cookies = require('universal-cookie');
 const cookieParser = require('cookie-parser');
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -18,7 +17,7 @@ app.use(cookieParser());
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv').config();
 
-const salt = process.env.SECRET_KEY;
+const salt = process.env.SECRET_SALT;
 
 const options = {
   host: process.env.MYSQL_HOST,
@@ -34,9 +33,14 @@ function DB_Connection() {
   return globalPool;
 }
 
+// jwt
+const jwt = require('jsonwebtoken');
+const key = process.env.SECRET_KEY;
+
 app.post('/login', async (req, res) => {
   const inputs = req.body;
 
+  // 사용자 정보 암호화
   const cryptedId = pbkdf2Sync(inputs.id, salt, 65000, 32, "sha512").toString("hex");
   const cryptedPassword = pbkdf2Sync(inputs.password, salt, 65000, 32, "sha512").toString("hex");
 
@@ -47,13 +51,18 @@ app.post('/login', async (req, res) => {
     const [row] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE id='${cryptedId}' AND password='${cryptedPassword}'`);
     console.log(row[0]);
     if (row[0].num) {
-      res.cookie('valid', 'valid', {
-        path: '/',
-        maxAge: 60 * 60 * 1000 // 1시간 후 만료
-      });
+      const token = jwt.sign(
+        {
+          userID: cryptedId
+        }, key, {
+          expiresIn: '1h'
+        }
+      );
+      res.cookie('valid', token);
       res.send(true);
     }
     else {
+      res.clearCookie('valid');
       res.status(401).send(false);
     }
   } catch (error) {
@@ -92,12 +101,18 @@ app.post('/join', async (req, res) => {
 
 app.post('/todos', async (req, res) => {
   const action = req.body;
-  console.log('post', action);
-  console.log('cookies:', req.cookies);
-  if (req.cookies.valid) {
+  const clientToken = req.cookies.valid;
 
+  const decoded = (clientToken)? jwt.verify(clientToken, key):undefined;
+
+  console.log('post', action);
+  console.log('cookies:', decoded);
+
+  if (decoded) {
     const pool = DB_Connection();
     const conn = await pool.getConnection();
+
+    const clientID = decoded.userID; // chk
 
     try {
       switch (action.type) {
