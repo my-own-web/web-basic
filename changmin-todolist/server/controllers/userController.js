@@ -26,9 +26,9 @@ exports.createToken = async (req, res) => {
   const conn = await pool.getConnection();
 
   try {
-    const [rows] = await conn.query(
-      `SELECT * FROM user WHERE username = '${req.body.username}'`
-    );
+    const [rows] = await conn.query("SELECT * FROM user WHERE username = ?", [
+      req.body.username,
+    ]);
 
     if (rows.length) {
       const [password, salt] = rows[0].password.split("$");
@@ -70,9 +70,9 @@ exports.createNewUser = async (req, res) => {
   const conn = await pool.getConnection();
 
   try {
-    const [rows] = await conn.query(
-      `SELECT * FROM user WHERE username = '${req.body.username}'`
-    );
+    const [rows] = await conn.query("SELECT * FROM user WHERE username = ?", [
+      req.body.username,
+    ]);
 
     if (!rows.length) {
       const salt = randomBytes(32).toString("base64");
@@ -80,9 +80,8 @@ exports.createNewUser = async (req, res) => {
       scrypt(req.body.password, salt, 64, async (err, derivedKey) => {
         if (err) throw err;
         await conn.query(
-          `INSERT INTO user (username, password) VALUES ('${
-            req.body.username
-          }', '${derivedKey.toString("base64")}$${salt}')`
+          "INSERT INTO user (username, password) VALUES (?, ?)",
+          [req.body.username, `${derivedKey.toString("base64")}$${salt}`]
         );
       });
       res.send("OK");
@@ -104,9 +103,9 @@ exports.removeUser = async (req, res) => {
   const conn = await pool.getConnection();
 
   try {
-    await conn.query(
-      `DELETE FROM user WHERE username = '${req.body.username}'`
-    );
+    await conn.query("DELETE FROM user WHERE username = ?", [
+      req.body.username,
+    ]);
     res.send("OK");
   } catch (err) {
     console.log(err);

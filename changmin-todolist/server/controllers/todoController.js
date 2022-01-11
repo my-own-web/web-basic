@@ -38,25 +38,29 @@ exports.postTodoList = async (req, res) => {
   const pool = connectDB();
   const conn = await pool.getConnection();
   try {
-    let sql;
+    let sql, values;
     switch (action.type) {
       case "CREATE":
-        sql = `INSERT INTO todo (id, text, done) VALUES (${action.todo.id}, '${action.todo.text}', ${action.todo.done})`;
+        sql = "INSERT INTO todo (id, text, done) VALUES (?, ?, ?)";
+        values = [action.todo.id, action.todo.text, action.todo.done];
         break;
       case "TOGGLE":
-        sql = `UPDATE todo SET done = 1 - done WHERE id = ${action.id}`;
+        sql = "UPDATE todo SET done = 1 - done WHERE id = ?";
+        values = [action.id];
         break;
       case "REMOVE":
-        sql = `DELETE FROM todo WHERE id = ${action.id}`;
+        sql = "DELETE FROM todo WHERE id = ?";
+        values = [action.id];
         break;
       case "EDIT":
-        sql = `UPDATE todo SET text = '${action.editText}' WHERE id = ${action.id}`;
+        sql = "UPDATE todo SET text = ? WHERE id = ?";
+        values = [action.editText, action.id];
         break;
       default:
         throw new Error(`Undefined Action: ${action.type}`);
     }
-    console.log(sql);
-    await conn.query(sql);
+    console.log(`${sql} / ${values}`);
+    await conn.query(sql, values);
     res.sendStatus(200);
   } catch (err) {
     console.log(err);
