@@ -58,7 +58,7 @@ app.post('/login', async (req, res) => {
           expiresIn: '1h'
         }
       );
-      res.cookie('valid', token);
+      res.cookie('valid', token, {path: '/', maxAge: 60*60*1000});
       res.send(true);
     }
     else {
@@ -71,6 +71,10 @@ app.post('/login', async (req, res) => {
     conn.release();
   }
 
+});
+
+app.post('logout', (req,res) => {
+  res.clearCookie('valid');
 });
 
 app.post('/join', async (req, res) => {

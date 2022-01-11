@@ -5,6 +5,7 @@ import { useTodoState } from '../TodoContext';
 import Button from '../design/Button';
 import Cookies from 'universal-cookie';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const TodoHeadBlock = styled.div`
     padding-top: 48px;
@@ -44,8 +45,13 @@ function TodoHead(){
 
     let navigate = useNavigate();
     const cookies = new Cookies();
-    const onLogOut = () => {
+    const onLogOut = async () => {
         cookies.remove('valid');
+        try{
+            await axios.post('/logout', null, {withCredentials: true});
+        } catch(error){
+            console.log(error);
+        }
         navigate('/');
     }
 
