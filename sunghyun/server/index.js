@@ -48,9 +48,9 @@ app.get("/todo/all", async (req, res)=>{
   const pool=todoListDBConnection();
   //console.log("풀 받아옴");
   const conn=await pool.getConnection();
-
+  const userId=req.query.user;
   try{
-    const [rows]=await conn.query("select * from todolist");
+    const [rows]=await conn.query(`select * from todolist where userid=${userId}`);
     //console.log(rows);
     res.send(rows);
   }
@@ -63,13 +63,15 @@ app.get("/todo/all", async (req, res)=>{
 })
 
 app.post("/todo/create", async (req, res)=>{
-  const data=req.body;
+  const todoData=req.body.todo;
+  const userId=req.body.userid;
   //console.log("서버에 보내진 데이터 ",data);
   const pool=todoListDBConnection();
   const conn=await pool.getConnection();
 
   try{
-    await conn.query("insert into todolist (text, done, editing) values (?,?,?)", [data.text, data.done, data.editing]);
+    await conn.query("insert into todolist (text, done, editing, userid) values (?,?,?)",
+      [todoData.text, todoData.done, todoData.editing, userId]);
     res.sendStatus(200);
   } catch(err){
     throw err;

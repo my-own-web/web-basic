@@ -26,6 +26,7 @@ function TodoListPage() {
         return data;
       }
       else{
+        //로그인된 회원이 아닐 경우
         const data=[];
         setTodos(data);
         return data;
@@ -38,6 +39,7 @@ function TodoListPage() {
   const onRemove=async (id)=>{
     try{
       await axios.post("http://localhost:8000/todo/remove", {id:id});
+      //todolist 항목들은 다 고유 id가 있으므로 id만 보내줘도 된다
       await fetchServerTodoList();
     } catch (err){
       console.log(err);
@@ -67,7 +69,8 @@ function TodoListPage() {
 
   const onCreate=async (newTodo)=>{
     try{
-      await axios.post("http://localhost:8000/todo/create", newTodo);
+      const curUserId=sessionStorage.getItem('curUserId');
+      await axios.post("http://localhost:8000/todo/create", {todo:newTodo, userid:curUserId});
       await fetchServerTodoList();
     } catch (err){
       console.log(err);

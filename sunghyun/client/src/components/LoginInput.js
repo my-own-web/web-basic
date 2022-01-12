@@ -31,18 +31,21 @@ const LoginInput=()=>{
     if(curUser.id){
       window.sessionStorage.setItem('curUserId', curUser.id);
       console.log(window.sessionStorage.getItem('curUserId'));
-      alert("로그인 성공!");
+      alert("로그인 성공! todolist로 이동합니다.");
+      setUserLoginInput({
+        username:'',
+        password: ''
+      });
       navigate("/");
     }
     else{
       alert("로그인 실패! 다시 로그인을 시도하세요.");
+      setUserLoginInput({
+        username:'',
+        password: ''
+      });
       navigate("/login");
-
     }
-    setUserLoginInput({
-      username:'',
-      password: ''
-    });
   };
 
   return (
