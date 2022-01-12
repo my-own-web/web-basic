@@ -6,12 +6,15 @@ import Input from "./Input";
 import LoginButton from "./LoginButton";
 import styled from "styled-components";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 const ConstraintInfo=styled.h5`
   margin:0;
 `;
 
 const SignUpInput=()=>{
+  const navigate=useNavigate();
+
   const [userSignUpInput, setUserSignUpInput]=useState({
     username:'',
     password:'',
@@ -38,12 +41,28 @@ const SignUpInput=()=>{
     }
     else{
       try{
-        await axios.post("http://localhost:8000/signup", userSignUpInput);
-        setUserSignUpInput({
-          username:'',
-          password:'',
-          verifypassword:''
-        })
+        const {data}=await axios.post("http://localhost:8000/signup", userSignUpInput);
+        console.log(data);
+        if(data.length){
+          //중복된 아이디가 존재
+          alert('중복된 아이디입니다. 다른 아이디를 입력해 주세요.');
+          setUserSignUpInput({
+            username:'',
+            password:'',
+            verifypassword:''
+          })
+          navigate("/signup");
+        }
+        else{
+          alert('회원가입이 성공하였습니다. 로그인 페이지로 이동합니다.');
+          setUserSignUpInput({
+            username:'',
+            password:'',
+            verifypassword:''
+          })
+          navigate("/login");
+        }
+
       } catch(err){
         console.log(err);
       }

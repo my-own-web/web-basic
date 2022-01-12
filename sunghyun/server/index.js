@@ -65,12 +65,12 @@ app.get("/todo/all", async (req, res)=>{
 app.post("/todo/create", async (req, res)=>{
   const todoData=req.body.todo;
   const userId=req.body.userid;
-  //console.log("서버에 보내진 데이터 ",data);
+  console.log("서버에 보내진 데이터 ",req.body);
   const pool=todoListDBConnection();
   const conn=await pool.getConnection();
 
   try{
-    await conn.query("insert into todolist (text, done, editing, userid) values (?,?,?)",
+    await conn.query("insert into todolist (text, done, editing, userid) values (?,?,?,?)",
       [todoData.text, todoData.done, todoData.editing, userId]);
     res.sendStatus(200);
   } catch(err){
@@ -84,7 +84,6 @@ app.post("/todo/toggle", async (req, res)=>{
   const data=req.body;
   const pool=todoListDBConnection();
   const conn=await pool.getConnection();
-  console.log(req.session);
   try{
     await conn.query("update todolist set done=1-done where id=?", data.id);
     res.sendStatus(200);
@@ -137,7 +136,7 @@ app.post("/signup", async(req, res)=>{
   try{
     const [rows]=await conn.query("select * from userinfo where username=?", newUser.username);
     //중복 아이디인지 체크
-    //console.log(rows);
+    console.log(rows);
     if(rows.length){
       //같은 유저네임을 가진 데이터가 있는 것이므로 중복된 유저네임이 존재
       console.log(rows);
@@ -148,7 +147,7 @@ app.post("/signup", async(req, res)=>{
       const passwordWithSalt=randomSalt+"$"+cryptedPassword;
       console.log(passwordWithSalt);
       await conn.query("insert into userinfo (username, password) values(?,?)", [newUser.username, passwordWithSalt]);
-      res.sendStatus(200);
+      res.send([]);
     }
   } catch(err){
     throw err;
@@ -186,9 +185,6 @@ app.post("/login/verify", async (req, res)=>{
       if(result){
         //같은 비밀번호임
         console.log(sameUsernameInfo.id);
-        req.session.curUserId=sameUsernameInfo.id;
-        console.log(req.session);
-        req.session.save((err)=>{console.log(err);});
         res.send({id:sameUsernameInfo.id});
         //로그인 성공시 그 유저의 id를 response 로 전송
       }
@@ -207,15 +203,6 @@ app.post("/login/verify", async (req, res)=>{
     conn.release();
   }
 });
-
-app.post("/login/check", (req, res)=>{
-  if(req.session.curUserId){
-    res.send({loggedIn:true, curUserId:req.session.curUserId});
-  }
-  else{
-    res.send({loggedIn:false});
-  }
-})
 
 app.listen(port, (req, res)=>{
   console.log(`server port 8000`);
