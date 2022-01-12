@@ -6,8 +6,11 @@ import React from "react";
 import LoginButton from "./LoginButton";
 import {useState} from "react";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 const LoginInput=()=>{
+  const navigate=useNavigate();
+
   const [userLoginInput, setUserLoginInput]=useState({
     username:'',
     password:''
@@ -19,20 +22,22 @@ const LoginInput=()=>{
       ...userLoginInput,
       [name]: value
     });
-    //console.log(userInput);
   }
 
   const onSubmit=async (e)=>{
     e.preventDefault();
     const {data:curUser}=await axios.post("http://localhost:8000/login/verify", userLoginInput);
-    console.log(curUser);
+    //만약 로그인 실패 시 curUser.id가 0으로 response 옴
     if(curUser.id){
       window.sessionStorage.setItem('curUserId', curUser.id);
       console.log(window.sessionStorage.getItem('curUserId'));
       alert("로그인 성공!");
+      navigate("/");
     }
     else{
-      alert("로그인 실패...");
+      alert("로그인 실패! 다시 로그인을 시도하세요.");
+      navigate("/login");
+
     }
     setUserLoginInput({
       username:'',
