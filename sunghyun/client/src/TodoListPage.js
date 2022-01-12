@@ -5,6 +5,8 @@ import TodoListHeader from "./components/TodoListHeader";
 import TodoList from "./components/TodoList";
 import TodoListCreate from "./components/TodoListCreate";
 import axios from "axios";
+import LoginButton from "./components/LoginButton";
+import {useNavigate} from "react-router-dom";
 
 const GlobalStyle=createGlobalStyle`
   body{
@@ -13,6 +15,8 @@ const GlobalStyle=createGlobalStyle`
 `
 
 function TodoListPage() {
+  const navigate=useNavigate();
+
   const [todos, setTodos]=useState([]);
 
   const fetchServerTodoList=async ()=>{
@@ -88,6 +92,14 @@ function TodoListPage() {
         <TodoListHeader todos={todos}/>
         <TodoList todos={todos} onRemove={onRemove} onToggle={onToggle} onEdit={onEdit}/>
         <TodoListCreate onCreate={onCreate}/>
+        <LoginButton
+          width='15rem'
+          height='3rem'
+          background='#da77f2'
+          onClick={()=>{navigate("/login");}}
+        >
+          다른 아이디로 로그인하기
+        </LoginButton>
       </PageTemplateBlock>
     </>
   );
