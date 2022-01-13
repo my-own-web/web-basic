@@ -1,31 +1,12 @@
-import React from 'react';
-import { createGlobalStyle } from 'styled-components';
-import TodoTemplate from './components/TodoTemplate';
-import TodoHead from './components/TodoHead';
-import TodoList from './components/TodoList';
-import TodoCreate from './components/TodoCreate';
-import { TodoProvider } from './TodoContext';
-//import axios from 'axios';
+import React, {useState} from "react";
+import Todopage from './Todopage';
+import Loginpage from './Loginpage';
 
-const GlobalStyle = createGlobalStyle`
-  body {
-    background: #e9ecef;
-  }
-`;
-
-
-function App() {
-  
-  return (
-    <TodoProvider>
-      <GlobalStyle />
-      <TodoTemplate>
-        <TodoHead/>
-        <TodoList/>
-        <TodoCreate/>
-      </TodoTemplate>
-    </TodoProvider>
-  );
-}
+function App(){
+    const [state, setstate] = useState(false);
+    return(
+        <Loginpage />
+    );
+};
 
 export default App;

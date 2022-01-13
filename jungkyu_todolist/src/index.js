@@ -1,13 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import Todopage from './Todopage';
 import reportWebVitals from './reportWebVitals';
+import {Route, Routes, BrowserRouter} from 'react-router-dom';
+import Loginpage from './Loginpage';
+import Signuppage from './Signuppage';
+
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  //<React.StrictMode>
+  //  <App />
+  //</React.StrictMode>,
+
+  <BrowserRouter>
+    <Routes>
+      <Route path = "/" element = {<Loginpage />} />
+      <Route path = "/todo" element = {<Todopage />} />
+      <Route path = "/signup" element = {<Signuppage />} />
+    </Routes>
+  </BrowserRouter>,
+
   document.getElementById('root')
 );
 
