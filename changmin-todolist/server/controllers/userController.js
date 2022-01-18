@@ -106,6 +106,9 @@ exports.removeUser = async (req, res) => {
     await conn.query("DELETE FROM user WHERE username = ?", [
       req.body.username,
     ]);
+    await conn.query("DELETE FROM todo WHERE username = ?", [
+      req.body.username,
+    ]);
     res.send("OK");
   } catch (err) {
     console.log(err);
