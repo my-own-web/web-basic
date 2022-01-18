@@ -13,8 +13,8 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.use("/todo", todoRouter);
-app.use("/user", userRouter);
+app.use("/api/todo", todoRouter);
+app.use("/api/user", userRouter);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);

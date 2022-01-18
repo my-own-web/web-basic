@@ -6,9 +6,9 @@ import LoginForm from "./components/LoginForm";
 import MenuTemplate from "./components/MenuTemplate";
 import { TodoProvider } from "./components/TodoContext";
 import { useContext, useEffect } from "react";
-import axios from "axios";
 import Cookies from "universal-cookie";
 import UserContext from "./contexts/UserContext";
+import { TodoAPI } from "./utils/axios";
 
 const cookies = new Cookies();
 
@@ -38,8 +38,8 @@ const App = () => {
   const { state, actions } = useContext(UserContext);
 
   async function verifyToken() {
-    await axios
-      .post("http://localhost:3001/user/auth", null, {
+    await TodoAPI
+      .post("/user/auth", null, {
         withCredentials: true,
       })
       .then((res) => {
