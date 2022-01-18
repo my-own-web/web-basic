@@ -1,9 +1,10 @@
-import axios from "axios";
 import React, { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
 import Cookies from "universal-cookie";
 import UserContext from "../contexts/UserContext";
+import { TodoAPI } from "../utils/axios";
+import { useTodoDispatch } from "./TodoContext";
 
 const cookies = new Cookies();
 
@@ -106,10 +107,9 @@ function LoginForm() {
     }
 
     async function checkUser() {
-      await axios
-        .post("http://localhost:3001/user/login", inputs, {
-          withCredentials: true,
-        })
+      await TodoAPI.post("/user/login", inputs, {
+        withCredentials: true,
+      })
         .then((res) => {
           switch (res.data) {
             case "OK":
@@ -179,8 +179,7 @@ function LoginForm() {
     }
 
     async function checkUser() {
-      await axios
-        .post("http://localhost:3001/user/register", inputs)
+      await TodoAPI.post("/user/register", inputs)
         .then((res) => {
           switch (res.data) {
             case "OK":
@@ -225,10 +224,9 @@ function LoginForm() {
   const onUnregister = (e) => {
     e.preventDefault();
     async function checkUser() {
-      await axios
-        .post("http://localhost:3001/user/unregister", {
-          username: state.username,
-        })
+      await TodoAPI.post("/user/unregister", {
+        username: state.username,
+      })
         .then((res) => {
           switch (res.data) {
             case "OK":

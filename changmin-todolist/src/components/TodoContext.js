@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, {
   createContext,
   useContext,
@@ -7,6 +6,7 @@ import React, {
   useRef,
 } from "react";
 import UserContext from "../contexts/UserContext";
+import { TodoAPI } from "../utils/axios";
 
 const todoList = [];
 
@@ -40,7 +40,7 @@ function todoReducer(state, action) {
       throw new Error(`Undefined Action: ${action.type}`);
   }
   async function sendTodo() {
-    await axios.post("http://localhost:3001/todo/edit", {
+    await TodoAPI.post("/todo/edit", {
       username: username,
       action,
     });
@@ -60,14 +60,12 @@ export function TodoProvider({ children }) {
   const value = useContext(UserContext);
 
   async function getInitialTodo() {
-    await axios
-      .post("http://localhost:3001/todo/get", { username })
-      .then((res) => {
-        dispatch({ type: "INIT", todo: res.data });
-        nextId.current = res.data.length
-          ? res.data[res.data.length - 1].id + 1
-          : 1;
-      });
+    await TodoAPI.post("/todo/get", { username }).then((res) => {
+      dispatch({ type: "INIT", todo: res.data });
+      nextId.current = res.data.length
+        ? res.data[res.data.length - 1].id + 1
+        : 1;
+    });
   }
 
   useEffect(() => {
