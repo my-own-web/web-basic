@@ -146,6 +146,7 @@ app.post('/todos', async (req, res) => {
       const [rows] = await conn.query(`SELECT * FROM todos_${clientId}`);
       const [col] = await conn.query(`SELECT MAX(id) AS maxID FROM todos_${clientId}`);
       res.send({
+        userId: clientId,
         todos: rows,
         nextID: col[0].maxID + 1
       });

@@ -2,10 +2,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useTodoState } from '../TodoContext';
-import Button from '../design/Button';
-import Cookies from 'universal-cookie';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 const TodoHeadBlock = styled.div`
     padding-top: 48px;
@@ -31,39 +27,29 @@ const TodoHeadBlock = styled.div`
     }
 `;
 
-function TodoHead(){
+function TodoHead() {
     const todos = useTodoState();
     const undoneTasks = todos.filter(todo => !todo.done);
-    
+
     const today = new Date();
-    const dateString = today.toLocaleDateString('ko-KR',{
+    const dateString = today.toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
     })
     const dayName = today.toLocaleDateString('ko-KR', { weekday: 'long' });
 
-    let navigate = useNavigate();
-    const cookies = new Cookies();
-    const onLogOut = async () => {
-        cookies.remove('valid');
-        try{
-            await axios.post('/logout', null, {withCredentials: true});
-        } catch(error){
-            console.log(error);
-        }
-        navigate('/');
-    }
-
-    return(
-        <TodoHeadBlock>
-            <div style={{display: 'flex', justifyContent: 'space-between'}}>
-            <h1>{dateString}</h1>
-            <Button color='pink' onClick={onLogOut}>로그아웃</Button>
-            </div>
-            <div className="day">{dayName}</div>
-            <div className="tasks-left">할 일 {undoneTasks.length}개 남음</div>
-        </TodoHeadBlock>
+    // justifyContent: 'space-between'
+    return (
+        <>
+            <TodoHeadBlock>
+                <div >
+                    <h1>{dateString}</h1>
+                    <div className="day">{dayName}</div>
+                    <div className="tasks-left">할 일 {undoneTasks.length}개 남음</div>
+                </div>
+            </TodoHeadBlock>
+        </>
     );
 }
 
