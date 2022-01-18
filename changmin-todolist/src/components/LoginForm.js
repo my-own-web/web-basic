@@ -79,6 +79,7 @@ function LoginForm() {
   const passwordCheckInput = useRef(); // PasswordCheck 입력 focus 위해 사용
   const [passwordCheckDisplay, setPasswordCheckDisplay] = useState(false); // PasswordCheck 입력 표시 여부
   const navigate = useNavigate(); // 로그인 성공 후 navigate 위해 사용
+  const dispatch = useTodoDispatch();
 
   const setPasswordCheckInput = (node) => {
     if (node) passwordCheckInput.current = node;
@@ -216,6 +217,7 @@ function LoginForm() {
     e.preventDefault();
     actions.setUsername(null);
     cookies.remove("user");
+    dispatch({ type: "INIT", todo: [] });
 
     alert("로그아웃되었습니다.");
     navigate("/");
@@ -231,6 +233,7 @@ function LoginForm() {
           switch (res.data) {
             case "OK":
               alert(`${state.username} 계정을 성공적으로 삭제하였습니다.`);
+              dispatch({ type: "INIT", todo: [] });
               navigate("/");
               break;
             default:
