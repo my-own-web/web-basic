@@ -55,6 +55,8 @@ const App = () => {
   useEffect(() => {
     if (cookies.get("user") && cookies.get("user") !== "undefined")
       verifyToken();
+    else
+      actions.setUsername(null);
   }, [state]);
 
   return (
