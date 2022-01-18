@@ -41,19 +41,18 @@ app.post('/login', async (req, res) => {
   const inputs = req.body;
 
   // 사용자 정보 암호화
-  const cryptedId = pbkdf2Sync(inputs.id, salt, 65000, 32, "sha512").toString("hex");
   const cryptedPassword = pbkdf2Sync(inputs.password, salt, 65000, 32, "sha512").toString("hex");
 
   const pool = DB_Connection();
   const conn = await pool.getConnection();
 
   try {
-    const [row] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE id='${cryptedId}' AND password='${cryptedPassword}'`);
+    const [row] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE id='${inputs.id}' AND password='${cryptedPassword}'`);
     console.log(row[0]);
     if (row[0].num) {
       const token = jwt.sign(
         {
-          userID: cryptedId
+          userID: inputs.id
         }, key, {
           expiresIn: '1h'
         }
@@ -80,16 +79,22 @@ app.post('logout', (req,res) => {
 app.post('/join', async (req, res) => {
   const inputs = req.body;
 
-  const cryptedId = pbkdf2Sync(inputs.newId, salt, 65000, 32, "sha512").toString("hex");
+  // const cryptedId = pbkdf2Sync(inputs.newId, salt, 65000, 32, "sha512").toString("hex");
   const cryptedPassword = pbkdf2Sync(inputs.newPassword, salt, 65000, 32, "sha512").toString("hex");
 
   const pool = DB_Connection();
   const conn = await pool.getConnection();
 
   try {
-    const [exist] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE id='${cryptedId}'`);
+    const [exist] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE id='${inputs.newId}'`);
     if (exist[0].num < 1) {
-      await conn.query(`INSERT INTO users(id, password) VALUES ('${cryptedId}', '${cryptedPassword}')`);
+      await conn.query(`INSERT INTO users(id, password) VALUES ('${inputs.newId}', '${cryptedPassword}')`);
+      await conn.query(`CREATE TABLE todos_${inputs.newId} (
+        id int,
+        text varchar(200),
+        done tinyint(1),
+        PRIMARY KEY (id)
+      )`)
       res.send(true);
     }
     else {
@@ -116,30 +121,30 @@ app.post('/todos', async (req, res) => {
     const pool = DB_Connection();
     const conn = await pool.getConnection();
 
-    const clientID = decoded.userID; // chk
+    const clientId = decoded.userID; // chk
 
     try {
       switch (action.type) {
         case 'FETCH':
           break;
         case 'CREATE':
-          await conn.query(`INSERT INTO todos VALUES (${action.todo.id}, '${action.todo.text}', ${action.todo.done})`);
+          await conn.query(`INSERT INTO todos_${clientId} VALUES (${action.todo.id}, '${action.todo.text}', ${action.todo.done})`);
           break;
         case 'TOGGLE':
-          const [col] = await conn.query(`SELECT done FROM todos WHERE id=${action.id}`);
-          await conn.query(`UPDATE todos SET done=${!col[0].done} WHERE id=${action.id}`);
+          const [col] = await conn.query(`SELECT done FROM todos_${clientId} WHERE id=${action.id}`);
+          await conn.query(`UPDATE todos_${clientId} SET done=${!col[0].done} WHERE id=${action.id}`);
           break;
         case 'REMOVE':
-          conn.query(`DELETE FROM todos WHERE id=${action.id}`);
+          conn.query(`DELETE FROM todos_${clientId} WHERE id=${action.id}`);
           break;
         case 'EDIT':
-          await conn.query(`UPDATE todos SET text='${action.text}' WHERE id=${action.id}`);
+          await conn.query(`UPDATE todos_${clientId} SET text='${action.text}' WHERE id=${action.id}`);
           break;
         default:
           throw new Error(`Unhandled action type: ${action.type}`);
       }
-      const [rows] = await conn.query('SELECT * FROM todos');
-      const [col] = await conn.query(`SELECT MAX(id) AS maxID FROM todos`);
+      const [rows] = await conn.query(`SELECT * FROM todos_${clientId}`);
+      const [col] = await conn.query(`SELECT MAX(id) AS maxID FROM todos_${clientId}`);
       res.send({
         todos: rows,
         nextID: col[0].maxID + 1
