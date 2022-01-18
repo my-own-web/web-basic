@@ -41,7 +41,7 @@ const SignUpInput=()=>{
     }
     else{
       try{
-        const {data}=await axios.post("http://localhost:8000/signup", userSignUpInput);
+        const {data}=await axios.post("http://localhost:8000/login/signup", userSignUpInput);
         console.log(data);
         if(data.length){
           //중복된 아이디가 존재
@@ -60,7 +60,7 @@ const SignUpInput=()=>{
             password:'',
             verifypassword:''
           })
-          navigate("/login");
+          navigate("/");
         }
 
       } catch(err){

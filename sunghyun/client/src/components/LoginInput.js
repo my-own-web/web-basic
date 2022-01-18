@@ -36,7 +36,7 @@ const LoginInput=()=>{
         username:'',
         password: ''
       });
-      navigate("/");
+      navigate("/todo");
     }
     else{
       alert("로그인 실패! 다시 로그인을 시도하세요.");
@@ -44,7 +44,7 @@ const LoginInput=()=>{
         username:'',
         password: ''
       });
-      navigate("/login");
+      navigate("/");
     }
   };
 

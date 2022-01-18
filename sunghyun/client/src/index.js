@@ -10,8 +10,8 @@ import SignUpPage from "./SignUpPage";
 ReactDOM.render(
   <BrowserRouter>
     <Routes>
-      <Route path='/' element={<TodoListPage />} />
-      <Route path='/login' element={<LoginPage />} />
+      <Route path='/' element={<LoginPage />} />
+      <Route path='/todo' element={<TodoListPage />} />
       <Route path='/signup' element={<SignUpPage />} />
     </Routes>
   </BrowserRouter>,

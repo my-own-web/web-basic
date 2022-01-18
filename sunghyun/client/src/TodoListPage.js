@@ -96,7 +96,7 @@ function TodoListPage() {
           width='15rem'
           height='3rem'
           background='#da77f2'
-          onClick={()=>{navigate("/login");}}
+          onClick={()=>{navigate("/");}}
         >
           다른 아이디로 로그인하기
         </LoginButton>

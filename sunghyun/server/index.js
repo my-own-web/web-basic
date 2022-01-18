@@ -125,7 +125,7 @@ app.post("/todo/edit", async (req, res)=>{
   }
 });
 
-app.post("/signup", async(req, res)=>{
+app.post("/login/signup", async(req, res)=>{
   const newUser=req.body;
   console.log(newUser);
   const pool=todoListDBConnection();
