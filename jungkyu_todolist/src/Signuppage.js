@@ -24,7 +24,7 @@ function Signuppage(){
             return;
         }
         try{
-            const res = await axios.post('http://localhost:3002/join',input);
+            const res = await axios.post('http://localhost:3002/signup',input);
             if(res.data){
                 alert('환영합니다');
                 navi('/');
@@ -43,7 +43,7 @@ function Signuppage(){
         <AppBlock>
         <div>
             <h1>회원가입</h1>
-            <Inputbox box="이메일" name="newId" placeholder="이메일" onChange={onChange} value={input.newId} />
+            <Inputbox box="ID" name="newId" placeholder="ID" onChange={onChange} value={input.newId} />
             <Inputbox box="비밀번호" name="newPassword" placeholder="비밀번호" type="password" onChange={onChange} value={input.newPassword}/>
         </div>
         <Button onClick={()=>{navi("/")}}> 취소 </Button>

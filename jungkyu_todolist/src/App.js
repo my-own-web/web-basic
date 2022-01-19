@@ -3,7 +3,7 @@ import Todopage from './Todopage';
 import Loginpage from './Loginpage';
 
 function App(){
-    const [state, setstate] = useState(false);
+    //const [state, setstate] = useState(false);
     return(
         <Loginpage />
     );

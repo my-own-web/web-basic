@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';//app.js
-import styled, { ThemeProvider } from 'styled-components';
+import styled from 'styled-components';
 import Button from './login_components/Button';
 import Inputbox from './login_components/Inputbox';
 import { useNavigate } from 'react-router-dom';
@@ -12,20 +12,6 @@ const AppBlock = styled.div`
   border: 1px solid black;
   padding: 1rem;
 `;
-
-/*const [data, setData] = useState([
-  {
-    id: 1,
-    user: '1111',
-    pwd: '1111'
-  },
-  {
-    id: 2,
-    user: '2222',
-    pwd: '2222'
-  }
-]);
-*/
 
 function Loginpage() {
     let navi = useNavigate();
@@ -42,7 +28,7 @@ function Loginpage() {
     };
     const fetchvalid = async() =>{
         try{
-            const res = await axios.post('http://localhost:3002/',input);
+            const res = await axios.post('http://localhost:3002/login',input);
             setvalid(res.data);
             if(!res.data){
                 alert('Wrong');

@@ -9,9 +9,6 @@ import Signuppage from './Signuppage';
 
 
 ReactDOM.render(
-  //<React.StrictMode>
-  //  <App />
-  //</React.StrictMode>,
 
   <BrowserRouter>
     <Routes>

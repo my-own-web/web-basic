@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
 import styled, {css} from 'styled-components';
 import {MdDone, MdDelete, MdOutlineBorderColor} from 'react-icons/md';
+//import { useTodoDispatch } from '../TodoContext';
 import { useTodoDispatch } from '../TodoContext';
-import {InsertFormPositioner, InsertForm, Input, CircleButton} from './TodoCreate';
+
+import {InsertFormPositioner, InsertForm, Input} from './TodoCreate';
 
 const Edit = styled.div`
 display: flex;
@@ -78,25 +80,27 @@ const Text = styled.div`
 function TodoItem({ id, done, text }) {
     const dispatch = useTodoDispatch();
 
+
     const onToggle = () => dispatch({type: 'TOGGLE', id});
-    const onRemove = () => dispatch({type: 'REMOVE', id});
+    const onRemove = () => {
+      dispatch({type: 'REMOVE', id});
+    }
 
     const [open, setOpen] = useState(false);
-    const[value, setValue] =useState('');
+    const[value, setValue] =useState(text);
 
     const editToggle = () => setOpen(!open);
     const editChange = e => setValue(e.target.value);
 
     const onEdit = e =>{
-         dispatch({type: 'EDIT', id, value});
-      setValue('');
+      dispatch({type: 'EDIT', id, value});
       setOpen(false);
     }
 
     
   return (
     <TodoItemBlock>
-      <CheckCircle done={done} onClick={onToggle}>{done && <MdDone />}</CheckCircle>
+      <CheckCircle done={done} onClick={onToggle}>{done? <MdDone /> : ''}</CheckCircle>
       <Text done={done}>{text}</Text>
 
       <Edit onClick = {editToggle} open = {open}>
