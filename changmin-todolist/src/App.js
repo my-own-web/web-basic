@@ -9,6 +9,7 @@ import { useContext, useEffect } from "react";
 import Cookies from "universal-cookie";
 import UserContext from "./contexts/UserContext";
 import { TodoAPI } from "./utils/axios";
+import Page from "./Page";
 
 const cookies = new Cookies();
 
@@ -77,10 +78,29 @@ const App = () => {
           <Route
             path="/"
             element={
-              state.username !== null ? <Main /> : <Navigate to="/login" />
+              state.username !== null ? (
+                <Page>
+                  <Main />
+                </Page>
+              ) : (
+                <Navigate to="/login" />
+              )
             }
           />
-          <Route path="/login" element={<LoginForm />} />
+          <Route
+            path="/login"
+            element={
+              state.username !== null ? (
+                <Page title="User Info">
+                  <LoginForm />
+                </Page>
+              ) : (
+                <Page title="Login">
+                  <LoginForm />
+                </Page>
+              )
+            }
+          />
         </Routes>
       </TodoTemplate>
     </TodoProvider>
