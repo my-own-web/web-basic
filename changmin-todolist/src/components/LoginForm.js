@@ -248,7 +248,12 @@ function LoginForm() {
       actions.setUsername(null);
       cookies.remove("user");
     }
-    checkUser();
+    if (
+      window.confirm(
+        `정말 ${state.username} 계정을 삭제하시겠습니까? 이 계정의 정보 및 투두리스트가 영구적으로 삭제되며, 되돌릴 수 없습니다.`
+      )
+    )
+      checkUser();
   };
 
   if (state.username) {
