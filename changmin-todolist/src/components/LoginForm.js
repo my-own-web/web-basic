@@ -153,8 +153,8 @@ function LoginForm() {
       return;
     }
 
-    if (username.length < 8 || username.length > 20) {
-      alert("Username은 8~20글자만 가능합니다.");
+    if (username.length < 4 || username.length > 20) {
+      alert("Username은 4~20글자만 가능합니다.");
       usernameInput.current.focus();
       return;
     }
