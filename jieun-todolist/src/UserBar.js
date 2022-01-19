@@ -35,13 +35,8 @@ function UserBar() {
 
   let navigate = useNavigate();
   const cookies = new Cookies();
-  const onLogOut = async () => {
+  const onLogOut = () => {
     cookies.remove('valid');
-    // try {
-    //   await axios.post('/logout', '', { withCredentials: true });
-    // } catch (error) {
-    //   console.log(error);
-    // }
     navigate('/');
   }
 

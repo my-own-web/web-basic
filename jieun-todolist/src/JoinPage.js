@@ -33,7 +33,7 @@ function JoinPage(){
         try{
             const res =  await axios.post('http://localhost:3001/join',inputs);
             if(res.data){
-                alert('환영합니다!'); // chk
+                alert('환영합니다!');
                 navigate("/");
             }
             else{
@@ -41,9 +41,9 @@ function JoinPage(){
             }
         } catch(err){
             console.log(err);
+        } finally{
+            setInputs({ newId: '', newPassword: '' });
         }
-
-        setInputs({ newId: '', newPassword: '' });
     };
 
 

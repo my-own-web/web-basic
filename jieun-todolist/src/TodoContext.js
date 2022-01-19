@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'universal-cookie';
 
 // state, dispatch 각각 다른 Context에 넣음. dispatch만 필요한 컴포넌트에서 불필요한 렌더링 방지 위함.
 const UserIdContext = createContext();
@@ -15,6 +16,8 @@ export function TodoProvider({ children }) {
     const nextID = useRef(0);
     let navigate = useNavigate();
 
+    const cookies = new Cookies();
+
     async function postTodos(action) {
         try {
             const { data } = await axios.post('http://localhost:3001/todos', action, { withCredentials: true });
@@ -25,6 +28,7 @@ export function TodoProvider({ children }) {
         } catch (error) {
             console.log(error);
             alert('로그인이 만료되었습니다.');
+            cookies.remove('valid');
             navigate('/');
         }
     }

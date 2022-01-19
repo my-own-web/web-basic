@@ -36,10 +36,11 @@ function LoginPage() {
             navigate("/todolist");
         } catch(err){
             console.log(err);
-            alert('Wrong ID or PASSWORD'); 
-            // cookies.remove('valid'); // 서버에서 쿠키 삭제
-        } 
-        setInputs({ id: '', password: '' });
+            alert('사용자 정보가 틀렸습니다.'); 
+            cookies.remove('valid');
+        } finally{
+            setInputs({ id: '', password: '' });
+        }
     };
 
     const onInputKeyPress = (e) => {
