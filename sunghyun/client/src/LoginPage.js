@@ -12,7 +12,7 @@ const GlobalStyle=createGlobalStyle`
 `;
 
 const LoginPage=()=>{
-
+  console.log(process.env.REACT_APP_NODE_ENV);
   return (
     <PageTemplateBlock height='650px'>
       <GlobalStyle />

@@ -17,8 +17,8 @@ app.use(session({
   saveUninitialized:false
 }));
 
-app.use("/todo", todoRouter);
-app.use("/login", loginRouter);
+app.use("/api/todo", todoRouter);
+app.use("/api/login", loginRouter);
 
 app.listen(port, (req, res)=>{
   console.log(`server port 8000`);
