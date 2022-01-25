@@ -5,8 +5,8 @@ import InputPositioner from "./InputPositioner";
 import Input from "./Input";
 import LoginButton from "./LoginButton";
 import styled from "styled-components";
-import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import {LoginAPI} from "../serverAPI";
 
 const ConstraintInfo=styled.h5`
   margin:0;
@@ -41,7 +41,7 @@ const SignUpInput=()=>{
     }
     else{
       try{
-        const {data}=await axios.post("http://localhost:8000/login/signup", userSignUpInput);
+        const {data}=await LoginAPI.post("/signup", userSignUpInput);
         console.log(data);
         if(data.length){
           //중복된 아이디가 존재

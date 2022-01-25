@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {createGlobalStyle} from "styled-components";
 import PageTemplateBlock from "./components/PageTemplate";
 import LogoHeader from "./components/LogoHeader";

@@ -4,9 +4,9 @@ import PageTemplateBlock from "./components/PageTemplate";
 import TodoListHeader from "./components/TodoListHeader";
 import TodoList from "./components/TodoList";
 import TodoListCreate from "./components/TodoListCreate";
-import axios from "axios";
 import LoginButton from "./components/LoginButton";
 import {useNavigate} from "react-router-dom";
+import {TodoAPI} from "./serverAPI";
 
 const GlobalStyle=createGlobalStyle`
   body{
@@ -25,7 +25,7 @@ function TodoListPage() {
       const curUserId=sessionStorage.getItem('curUserId');
       //만약 세션 스토리지에 그런 아이템이 없다면 null 을 리턴한다
       if(curUserId){
-        const {data}=await axios.get(`http://localhost:8000/todo/all?user=${curUserId}`);
+        const {data}=await TodoAPI.get(`/all?user=${curUserId}`);
         setTodos(data);
         return data;
       }
@@ -42,7 +42,7 @@ function TodoListPage() {
 
   const onRemove=async (id)=>{
     try{
-      await axios.post("http://localhost:8000/todo/remove", {id:id});
+      await TodoAPI.post("/remove", {id:id});
       //todolist 항목들은 다 고유 id가 있으므로 id만 보내줘도 된다
       await fetchServerTodoList();
     } catch (err){
@@ -55,7 +55,7 @@ function TodoListPage() {
       console.log(sessionStorage.key(i) + "=[" + sessionStorage.getItem(sessionStorage.key(i)) + "]");
     }*/
     try{
-      await axios.post("http://localhost:8000/todo/toggle", {id:id});
+      await TodoAPI.post("/toggle", {id:id});
       await fetchServerTodoList();
     } catch (err){
       console.log(err);
@@ -64,7 +64,7 @@ function TodoListPage() {
 
   const onEdit=async (curTodo)=>{
     try{
-      await axios.post("http://localhost:8000/todo/edit", curTodo);
+      await TodoAPI.post("/edit", curTodo);
       await fetchServerTodoList();
     } catch (err){
       console.log(err);
@@ -74,7 +74,7 @@ function TodoListPage() {
   const onCreate=async (newTodo)=>{
     try{
       const curUserId=sessionStorage.getItem('curUserId');
-      await axios.post("http://localhost:8000/todo/create", {todo:newTodo, userid:curUserId});
+      await TodoAPI.post("/create", {todo:newTodo, userid:curUserId});
       await fetchServerTodoList();
     } catch (err){
       console.log(err);

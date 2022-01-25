@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { MdAdd } from 'react-icons/md';
 import Input from "./Input";
-import axios from "axios";
 
 const CircleButton=styled.button`
   background: #38d9a9;

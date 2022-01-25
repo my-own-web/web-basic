@@ -5,8 +5,8 @@ import {ColumnContainer} from "./Container";
 import React from "react";
 import LoginButton from "./LoginButton";
 import {useState} from "react";
-import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import {LoginAPI} from "../serverAPI";
 
 const LoginInput=()=>{
   const navigate=useNavigate();
@@ -26,7 +26,7 @@ const LoginInput=()=>{
 
   const onSubmit=async (e)=>{
     e.preventDefault();
-    const {data:curUser}=await axios.post("http://localhost:8000/login/verify", userLoginInput);
+    const {data:curUser}=await LoginAPI.post("/verify", userLoginInput);
     //만약 로그인 실패 시 curUser.id가 0으로 response 옴
     if(curUser.id){
       window.sessionStorage.setItem('curUserId', curUser.id);

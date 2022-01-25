@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import {ColumnContainer, RowContainer} from "./Container";
+import {ColumnContainer} from "./Container";
 
 const LogoHeaderBlock=styled.div`
   display: flex;
