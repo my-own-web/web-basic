@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { TodoApi } from './utils/axios';
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
@@ -20,7 +20,7 @@ export function TodoProvider({ children }) {
 
     async function postTodos(action) {
         try {
-            const { data } = await axios.post('http://localhost:3001/todos', action, { withCredentials: true });
+            const { data } = await TodoApi.post('/todos', action, { withCredentials: true });
             setTodos(data.todos);
             nextID.current = data.nextID;
             setUserId(data.userId);

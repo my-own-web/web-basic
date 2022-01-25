@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors({
-  origin: 'http://localhost:3000',
+  // origin: 'http://localhost:3000',
   credentials: true // 크로스 도메인 허용
 }));
 app.use(bodyParser.json());
@@ -37,7 +37,7 @@ function DB_Connection() {
 const jwt = require('jsonwebtoken');
 const key = process.env.SECRET_KEY;
 
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
   const inputs = req.body;
 
   // 사용자 비밀번호 암호화
@@ -74,7 +74,7 @@ app.post('/login', async (req, res) => {
 
 });
 
-app.post('/join', async (req, res) => {
+app.post('/api/join', async (req, res) => {
   const inputs = req.body;
 
   const cryptedPassword = pbkdf2Sync(inputs.newPassword, salt, 65000, 32, "sha512").toString("hex");
@@ -109,7 +109,7 @@ app.post('/join', async (req, res) => {
   }
 });
 
-app.post('/todos', async (req, res) => {
+app.post('/api/todos', async (req, res) => {
   const action = req.body;
   const clientToken = req.cookies.valid;
 

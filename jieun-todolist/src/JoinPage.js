@@ -5,7 +5,7 @@ import Button from './design/Button';
 import SmallBlock from './design/SmallBlock';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import axios from 'axios';
+import {TodoApi} from './utils/axios';
 
 function JoinPage(){
     let navigate = useNavigate();
@@ -31,7 +31,7 @@ function JoinPage(){
 
         //send data to server
         try{
-            const res =  await axios.post('http://localhost:3001/join',inputs);
+            const res =  await TodoApi.post('/join',inputs);
             if(res.data){
                 alert('환영합니다!');
                 navigate("/");
