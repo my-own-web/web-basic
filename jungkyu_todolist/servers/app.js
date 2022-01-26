@@ -30,7 +30,7 @@ function DB_connection(){
   return globalPool;
 };
 
-app.post('/login',async(req,res)=>{
+app.post('/api/login',async(req,res)=>{
   const body = req.body;
   const pool = DB_connection();
   const conn = await pool.getConnection();
@@ -50,7 +50,7 @@ app.post('/login',async(req,res)=>{
   }
 });
 
-app.post('/signup',async(req,res)=>{
+app.post('/api/signup',async(req,res)=>{
   const body = req.body;
   const pool = DB_connection();
   const conn = await pool.getConnection();
@@ -75,7 +75,7 @@ app.post('/signup',async(req,res)=>{
 });
 
 
-app.post("/todo", async (request, response)=>{
+app.post("/api/todo", async (request, response)=>{
   const body = request.body;
   console.log(body);
 

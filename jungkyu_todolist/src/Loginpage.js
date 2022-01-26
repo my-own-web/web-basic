@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import Button from './login_components/Button';
 import Inputbox from './login_components/Inputbox';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+//import axios from 'axios';
+import {TodoAPI} from './utils/axios';
 
 const AppBlock = styled.div`
   width: 512px;
@@ -28,7 +29,7 @@ function Loginpage() {
     };
     const fetchvalid = async() =>{
         try{
-            const res = await axios.post('http://localhost:3002/login',input);
+            const res = await TodoAPI.post('/login',input);
             setvalid(res.data);
             if(!res.data){
                 alert('Wrong');

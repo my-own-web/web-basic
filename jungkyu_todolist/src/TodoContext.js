@@ -1,10 +1,11 @@
 //import { render } from 'express/lib/response';
 import React, {useReducer, createContext, useContext, useRef, useEffect, useState} from 'react';
 import axios from 'axios';
+import { TodoAPI } from './utils/axios';
 
 async function updateDataToServer(action){
   try{
-      await axios.post("http://localhost:3002/todo",action);
+      await TodoAPI.post("/todo",action);
   }catch(err){
     console.error(err);
   }
@@ -43,7 +44,7 @@ export function TodoProvider({children}){
   const nextId = useRef(5);
   async function fetchInitialData(){
     try{
-      const {data} = await axios.get("http://localhost:3002/todo")
+      const {data} = await axios.get("http://localhost3002/todo")
       //setInitialTodo(data);
       console.log(data);
       console.log(data.nextId);

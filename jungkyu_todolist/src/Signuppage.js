@@ -2,8 +2,10 @@ import React, {useState} from 'react';
 import Inputbox from './login_components/Inputbox';
 import Button from './login_components/Button';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+//import axios from 'axios';
 import styled from 'styled-components';
+import { TodoAPI } from './utils/axios';
+
 const AppBlock = styled.div`
   width: 512px;
   margin: 0 auto;
@@ -24,7 +26,7 @@ function Signuppage(){
             return;
         }
         try{
-            const res = await axios.post('http://localhost:3002/signup',input);
+            const res = await TodoAPI.post('/signup',input);
             if(res.data){
                 alert('환영합니다');
                 navi('/');
