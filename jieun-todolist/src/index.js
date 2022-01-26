@@ -8,13 +8,13 @@ import TodoPage from './TodoPage';
 import JoinPage from './JoinPage';
 
 ReactDOM.render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<LoginPage />} />
-      <Route path="/todolist" element={<TodoPage />} />
-      <Route path="/join" element={<JoinPage />} />
-    </Routes>
-  </BrowserRouter>,
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/todolist" element={<TodoPage />} />
+        <Route path="/join" element={<JoinPage />} />
+      </Routes>
+    </BrowserRouter>,
   document.getElementById('root')
 );
 

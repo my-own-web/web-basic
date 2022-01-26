@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { TodoApi } from './utils/axios';
 import Button from './design/Button';
 import Input from './design/Input';
 import SmallBlock from './design/SmallBlock';
+import Cookies from 'universal-cookie';
 
 function LoginPage() {
     // 페이지 이동 준비
@@ -14,13 +15,6 @@ function LoginPage() {
         password: ''
     });
     
-    const [valid, setValid] = useState(false);
-    useEffect(()=>{
-        if(valid){
-            navigate("/todolist");
-        }
-    }, [valid]);
-
     const onChange = (e) => {
         const { value, name } = e.target;
         setInputs({
@@ -29,18 +23,24 @@ function LoginPage() {
         });
     };
 
+    // 쿠키
+    const cookies = new Cookies();
+
     // express에 데이터 보내기. onSubmit에서 호출
     const fetchValid = async() =>{
         try{
-            const res = await axios.post('http://localhost:3001/login', inputs);
-            setValid(res.data);
-            if(!res.data){
-                alert('Wrong ID or PASSWORD'); 
-            }
+            const res = await TodoApi.post('/login', inputs, {withCredentials: true});
+            // 크로스 도메인 쿠키 허용
+            console.log('쿠키:',cookies.get('valid')); // dbg
+            console.log('res.data:', res.data);
+            navigate("/todolist");
         } catch(err){
             console.log(err);
-        } 
-        setInputs({ id: '', password: '' });
+            alert('사용자 정보가 틀렸습니다.'); 
+            cookies.remove('valid');
+        } finally{
+            setInputs({ id: '', password: '' });
+        }
     };
 
     const onInputKeyPress = (e) => {

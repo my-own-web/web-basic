@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import TodoTemplate from './todolist/TodoTemplate';
 import TodoHead from './todolist/TodoHead';
 import TodoList from './todolist/TodoList';
 import TodoCreate from './todolist/TodoCreate';
 import { TodoProvider } from './TodoContext';
-import {createGlobalStyle} from 'styled-components';
-
+import { createGlobalStyle } from 'styled-components';
+import UserBar from './UserBar';
 // createGlobalStyle: 글로벌 스타일
 
 const GlobalStyle = createGlobalStyle`
@@ -16,10 +16,11 @@ const GlobalStyle = createGlobalStyle`
 // body 태그에 CSS 적용. 배경색: 회색
 // index.css에서도 가능.
 
-function TodoPage(){
-  return(
+function TodoPage() {
+  return (
     <TodoProvider>
       <GlobalStyle />
+      <UserBar />
       <TodoTemplate>
         <TodoHead />
         <TodoList />
