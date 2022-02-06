@@ -2,7 +2,9 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { darken } from 'polished';
 import { useHistory } from 'react-router-dom';
-import axios from 'axios';
+import { TodoAPI } from './utils/axios';
+import TodoNav from './components/TodoNav';
+import Nav from './components/Nav';
 
 const SignUpBlock = styled.div`
   width: 512px;
@@ -95,7 +97,7 @@ function SignUp() {
 
   async function fetchInitial() {
     try {
-      const { data } = await axios.get("http://localhost:3001/sign");
+      const { data } = await TodoAPI.get("/sign");
       setUsers(data);
       console.log(data);
     } catch (err) {
@@ -104,7 +106,7 @@ function SignUp() {
   }
 
   async function postData(data) {
-    await axios.post("http://localhost:3001/sign/account", data);
+    await TodoAPI.post("/sign/account", data);
   }
 
   useEffect(() => {

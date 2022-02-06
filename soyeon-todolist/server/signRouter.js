@@ -1,15 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
-router.use(cors());
+router.use(cors({ origin: true, credentials: true }));
+//router.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 router.use(express.json());
-router.use(express.urlencoded({ extended: true }));
+router.use(express.urlencoded({ extended: false }));
+const cookieParser = require('cookie-parser');
+router.use(cookieParser());
+const { pbkdf2, pbkdf2Sync } = require('crypto');
 
 const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv").config();
 
 const mysql = require('mysql2/promise');
 const SECRET_KEY = process.env.SECRET_KEY;
+const randomSalt = process.env.SALT;
+
+const middleware = require('./auth');
 
 const options = {
   host: process.env.MYSQL_HOST,
@@ -28,64 +35,51 @@ function DB_connection() {
   return globalPool;
 }
 
-/*let users = [
-  {
-    ID: 'hello1',
-    Password: 'hi1'
-  },
-  {
-    ID: 'hello2',
-    Password: 'hi2'
-  },
-  {
-    ID: 'hello3',
-    Password: 'hi3'
-  }
-];*/
-
-
-
-router.get('/makejwt', async (req, res, next) => {
+router.post('/login', async (req, res) => {
+  const pool = DB_connection();
+  const conn = await pool.getConnection();
   try {
-    haveUser = req.body[0];
-    ID = req.body[1];
+    //const haveUser = req.body.didLogin;
+    const id = req.body.ID;
+    const password = req.body.Password;
+    let haveUser;
+
+    const cryptedPassword = pbkdf2Sync(password, randomSalt, 65536, 32, "sha512").toString("hex");
+    //const [rows] = await conn.query(`SELECT COUNT(*) AS num FROM users WHERE ID='${id}' AND Password='${cryptedPassword}'`);
+    const sql = `SELECT COUNT(*) AS num FROM users WHERE ID=? AND Password=?`;
+    const params = [id, cryptedPassword];
+    const [rows] = await conn.query(sql, params);
+
+    if (rows[0].num)
+      haveUser = true;
+    else
+      haveUser = false;
+
     if (haveUser) {
       const token = jwt.sign({
-        ID: { ID }
+        ID: id  //payload: 데이터
       }, SECRET_KEY, {
-        expiresIn: '1h'
+        expiresIn: '1h' //options
       });
+      //console.log(token);
+      res.cookie('userInf', token, {
+        path: "/",
+        maxAge: 60 * 60 * 1000, //만료시간 1 hour
+      }); //userInf라는 이름의 cookie 생성
 
-      res.cookie('userInf', token);
-      res.status(201).json({
-        result: 'ok',
-        token
-      });
+      res.send('OK');
     } else {
-      res.status(400).json({ error: 'invalid user' });
+      res.send('Invalid User');
     }
   } catch (err) {
     console.log(err);
+    res.sendStatus(500);
   }
-
+  finally {
+    conn.release();
+  }
 });
 
-
-/*async function createToken(req, res, next) {
-  try {
-    
-    if (rows.length){
-      const token = jwt.sign({
-        user_id: rows.
-      }, SECRET_KEY, {
-        expiresIn: '1h'
-      });
-    }
-
-  } catch (err) {
-    console.log(err);
-  }
-}*/
 
 router.get('/', async (req, res) => {
   const pool = DB_connection();
@@ -107,9 +101,14 @@ router.post('/account', async (req, res) => {
   const body = req.body;
   const id = body.ID;
   const password = body.Password;
+
+  const cryptedPassword = pbkdf2Sync(password, randomSalt, 65536, 32, 'sha512').toString('hex');
+
   try {
-    const [rows] = await conn.query(`INSERT INTO users VALUES ('${id}', '${password}')`);
-    res.send(rows);
+    //const [rows] = await conn.query(`INSERT INTO users VALUES ('${id}', '${cryptedPassword}')`);
+    const sql = `INSERT INTO users VALUES (?, ?)`;
+    const params = [id, cryptedPassword];
+    await conn.query(sql, params);
   } catch (err) {
     console.log(err);
   } finally {
@@ -119,5 +118,22 @@ router.post('/account', async (req, res) => {
   //users에 body 추가
   //users.push(body);
 })
+
+router.put("/delete", async (req, res) => {
+  const pool = DB_connection();
+  const conn = await pool.getConnection();
+  const id = req.body.id;
+  try {
+    const sql = `DELETE FROM users WHERE ID=?`
+    const params = [id];
+    await conn.query(sql, params);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    conn.release();
+  }
+})
+
+router.post("/auth", middleware.verifyToken);
 
 module.exports = router;

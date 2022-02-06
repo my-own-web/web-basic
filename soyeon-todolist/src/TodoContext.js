@@ -1,18 +1,18 @@
 import React, { useEffect, useReducer, createContext, useContext, useRef, useState } from 'react';
-import axios from 'axios';
+import { TodoAPI } from './utils/axios';
 
 async function updateDataToServer(actionType, data) {
     if (actionType === 'CREATE') {
-        await axios.post("http://localhost:3001/todo/create", data);
+        await axios.TodoAPI("h/todo/create", data);
     }
     else if (actionType === 'TOGGLE') {
-        await axios.put("http://localhost:3001/todo/toggle", data);
+        await axios.TodoAPI("/todo/toggle", data);
     }
     else if (actionType === 'REMOVE') {
-        await axios.put("http://localhost:3001/todo/remove", data);
+        await axios.TodoAPI("/todo/remove", data);
     }
     else if (actionType === 'EDITDONE') {
-        await axios.put("http://localhost:3001/todo/edit", data);
+        await axios.TodoAPI("/todo/edit", data);
     }
 }
 
@@ -63,11 +63,13 @@ const TodoNextIdContext = createContext();
 export function TodoProvider({ children }) {
     const [initialTodo, setInitialTodo] = useState([]);
     const [state, dispatch] = useReducer(todoReducer, []);
-    const nextId = useRef(5);
+    const nextId = useRef(0);
 
     async function fetchInitialData() {
         try {
-            const { data } = await axios.get("http://localhost:3001/todo")
+            const { data } = await TodoAPI.get("/todo")
+            const len = data.length;
+            nextId.current = data[len - 1].id + 1;
             setInitialTodo(data);
             //skeleton을 이용하면 깜박거리는 현상을 없앨 수 있음
             console.log(data);

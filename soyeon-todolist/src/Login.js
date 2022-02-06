@@ -3,7 +3,9 @@ import styled, { createGlobalStyle } from 'styled-components';
 //import TodoTemplateBlock from './components/TodoTemplate';
 import { darken } from 'polished';
 import { useHistory } from 'react-router-dom';
-import axios from 'axios';
+import { TodoAPI } from './utils/axios';
+import TodoNav from './components/TodoNav';
+import Nav from './components/Nav';
 
 const LoginBlock = styled.div`
   width: 512px;
@@ -91,12 +93,11 @@ const LoginButton = styled.button`
 
 function Login() {
 
-  ///////////////////////////////////////////
   const [users, setUsers] = useState([]);
 
   async function fetchInitial() {
     try {
-      const { data } = await axios.get("http://localhost:3001/sign")
+      const { data } = await TodoAPI.post("/sign");
       setUsers(data);
       console.log(data);
     } catch (err) {
@@ -112,12 +113,23 @@ function Login() {
     return users;
   }, [users]);
 
+  let history = useHistory();
   //////////////////
   async function haveUser(LoginInf) {
+
     try {
-      await axios.post("http://localhost:3001/login/makejwt", LoginInf);
+      const res = await TodoAPI.post("/sign/login", LoginInf);
+
+      if (res.data === 'OK') {
+        alert("성공적으로 로그인되었습니다.");
+        history.replace("/");
+      }
+      else if (res.data === 'Invalid User') { //didLogin이 false일 때
+        alert("아이디 또는 비밀번호를 확인하세요.");
+      }
     } catch (err) {
       console.log(err);
+      alert("오류가 발생했습니다. 다시 시도해 주세요.");
     }
   }
   ////////////////////////
@@ -140,8 +152,6 @@ function Login() {
     [userInf]
   );
 
-  let history = useHistory();
-
   const onSubmit = () => {
     const loginUser = {
       ID,
@@ -154,20 +164,13 @@ function Login() {
     });
 
     //users에 있는 계정 정보와 겹치면 main 화면으로, 아니면 다시 로그인하도록 하기
-    let didLogin = false;
-    users.map(user =>
-      (user.ID === loginUser.ID) && (user.Password === loginUser.Password) ? didLogin = true : '');
+    //let didLogin = false;
+    //users.map(user =>
+    //  (user.ID === loginUser.ID) && (user.Password === loginUser.Password) ? didLogin = true : '');
 
-    /////////////////////////
-    //haveLogin([didLogin,ID]);
-    ///////////////////
-    if (didLogin === true) {
-      return history.replace("/");
-    }
-    else {
-      alert("아이디 또는 비밀번호를 확인하세요.")
-    }
-    ////////////////
+    //haveUser({ didLogin, ID: loginUser.ID });
+    haveUser(loginUser);
+
   };
 
   return (

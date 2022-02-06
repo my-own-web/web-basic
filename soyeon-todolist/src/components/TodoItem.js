@@ -97,9 +97,9 @@ function TodoItem({ id, done, text }) {
     setEdited(true);
   }
 
-  const onClickDone = () => {
+  /*const onClickDone = () => {
     setEdited(false);
-  }
+  }*/
 
   /*const onArticle = (edited) => {
     return edited ? (<form onSubmit={doneEdit}><input autoFocus value={changeText} onChange={onEditInput} /></form>)

@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
-router.use(cors());
+router.use(cors({ origin: true, credentials: true }));
 
 // POST 요청을 통해 데이터를 받기 위해 선언
 router.use(express.json()); //JSON 형식의 데이터 받음
 router.use(express.urlencoded({ extended: true }));
 
 const dotenv = require("dotenv").config();
-
 const mysql = require('mysql2/promise');
 
 const options = {
@@ -30,30 +29,8 @@ function DB_connection() {
   return globalPool;
 }
 
-/*let initialTodos = [
-  {
-    id: 1,
-    text: '프로젝트 생성하기',
-    done: true
-  },
-  {
-    id: 2,
-    text: '컴포넌트 스타일링하기',
-    done: true
-  },
-  {
-    id: 3,
-    text: 'Context 만들기',
-    done: false
-  },
-  {
-    id: 4,
-    text: '기능 구현하기',
-    done: false
-  }
-];*/
-
 router.get('/', async (req, res) => {
+
   //DB로부터 todo 데이터를 가져와서
   const pool = DB_connection();
   //DB로 쿼리 요청이 가능한 연결시도
@@ -79,8 +56,10 @@ router.post("/create", async (req, res) => {
   const text = body.text;
   const done = body.done;
   try {
-    const [rows] = await conn.query(`INSERT INTO todo VALUES (${id}, '${text}', ${done})`);
-    res.send(rows);
+    //const [rows] = await conn.query(`INSERT INTO todo VALUES (${id}, '${text}', ${done})`);
+    const sql = `INSERT INTO todo VALUES (?, ?, ?)`;
+    const params = [id, text, done];
+    await conn.query(sql, params);
   } catch (err) {
     console.log(err);
   } finally {
@@ -95,8 +74,7 @@ router.put("/toggle", async (req, res) => {
   const conn = await pool.getConnection();
   const id = req.body.id;
   try {
-    const [rows] = await conn.query(`UPDATE todo SET done = 1-done WHERE id=${id}`);
-    res.send(rows);
+    await conn.query(`UPDATE todo SET done = 1-done WHERE id=${id}`);
   } catch (err) {
     console.log(err);
   } finally {
@@ -111,7 +89,10 @@ router.put("/remove", async (req, res) => {
   const conn = await pool.getConnection();
   const id = req.body.id;
   try {
-    const [rows] = await conn.query(`DELETE FROM todo WHERE id=${id}`);
+    //const [rows] = await conn.query(`DELETE FROM todo WHERE id=${id}`);
+    const sql = `DELETE FROM todo WHERE id=?`
+    const params = [id];
+    await conn.query(sql, params);
   } catch (err) {
     console.log(err);
   } finally {
@@ -131,7 +112,10 @@ router.put("/edit", async (req, res) => {
   const id = req.body.id;
   const text = req.body.text;
   try {
-    const [rows] = await conn.query(`UPDATE todo SET text='${text}' WHERE id=${id}`);
+    //const [rows] = await conn.query(`UPDATE todo SET text='${text}' WHERE id=${id}`);
+    const sql = (`UPDATE todo SET text=? WHERE id=?`);
+    const params = [text, id];
+    await conn.query(sql, params);
   } catch (err) {
     console.log(err);
   } finally {
