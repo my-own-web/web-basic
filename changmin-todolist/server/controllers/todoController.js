@@ -17,10 +17,14 @@ function connectDB() {
 }
 
 exports.getTodoList = async (req, res) => {
+  const username = req.body.username;
+
   const pool = connectDB();
   const conn = await pool.getConnection();
   try {
-    const [rows] = await conn.query("SELECT * FROM todo");
+    const [rows] = await conn.query("SELECT * FROM todo WHERE username = ?", [
+      req.body.username,
+    ]);
     console.log(rows);
     res.send(rows);
   } catch (err) {
@@ -31,32 +35,38 @@ exports.getTodoList = async (req, res) => {
   }
 };
 
-exports.postTodoList = async (req, res) => {
+exports.editTodoList = async (req, res) => {
+  const username = req.body.username;
   const action = req.body.action;
+
   console.log(action);
 
   const pool = connectDB();
   const conn = await pool.getConnection();
   try {
-    let sql;
+    let sql, values;
     switch (action.type) {
       case "CREATE":
-        sql = `INSERT INTO todo (id, text, done) VALUES (${action.todo.id}, '${action.todo.text}', ${action.todo.done})`;
+        sql = "INSERT INTO todo (username, id, text, done) VALUES (?, ?, ?, ?)";
+        values = [username, action.todo.id, action.todo.text, action.todo.done];
         break;
       case "TOGGLE":
-        sql = `UPDATE todo SET done = 1 - done WHERE id = ${action.id}`;
+        sql = "UPDATE todo SET done = 1 - done WHERE username = ? AND id = ?";
+        values = [username, action.id];
         break;
       case "REMOVE":
-        sql = `DELETE FROM todo WHERE id = ${action.id}`;
+        sql = "DELETE FROM todo WHERE username = ? AND id = ?";
+        values = [username, action.id];
         break;
       case "EDIT":
-        sql = `UPDATE todo SET text = '${action.editText}' WHERE id = ${action.id}`;
+        sql = "UPDATE todo SET text = ? WHERE username = ? AND id = ?";
+        values = [action.editText, username, action.id];
         break;
       default:
         throw new Error(`Undefined Action: ${action.type}`);
     }
-    console.log(sql);
-    await conn.query(sql);
+    console.log(`${sql} / ${values}`);
+    await conn.query(sql, values);
     res.sendStatus(200);
   } catch (err) {
     console.log(err);

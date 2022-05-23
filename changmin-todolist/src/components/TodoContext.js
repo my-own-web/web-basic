@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, {
   createContext,
   useContext,
@@ -6,8 +5,12 @@ import React, {
   useReducer,
   useRef,
 } from "react";
+import UserContext from "../contexts/UserContext";
+import { TodoAPI } from "../utils/axios";
 
 const todoList = [];
+
+let username;
 
 function todoReducer(state, action) {
   let newState = [];
@@ -37,7 +40,10 @@ function todoReducer(state, action) {
       throw new Error(`Undefined Action: ${action.type}`);
   }
   async function sendTodo() {
-    await axios.post("http://localhost:3001/todo", { action });
+    await TodoAPI.post("/todo/edit", {
+      username: username,
+      action,
+    });
   }
   if (action.type !== "INIT") sendTodo();
   return newState;
@@ -51,15 +57,21 @@ export function TodoProvider({ children }) {
   const [state, dispatch] = useReducer(todoReducer, todoList);
   const nextId = useRef(0);
 
+  const value = useContext(UserContext);
+
+  async function getInitialTodo() {
+    await TodoAPI.post("/todo/get", { username }).then((res) => {
+      dispatch({ type: "INIT", todo: res.data });
+      nextId.current = res.data.length
+        ? res.data[res.data.length - 1].id + 1
+        : 1;
+    });
+  }
+
   useEffect(() => {
-    async function getInitialTodo() {
-      await axios.get("http://localhost:3001/todo").then((res) => {
-        dispatch({ type: "INIT", todo: res.data });
-        nextId.current = res.data[res.data.length - 1].id + 1;
-      });
-    }
-    getInitialTodo();
-  }, []);
+    username = value.state.username;
+    if (username) getInitialTodo();
+  }, [value]);
 
   return (
     <TodoStateContext.Provider value={state}>

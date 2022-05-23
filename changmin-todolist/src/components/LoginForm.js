@@ -1,8 +1,10 @@
-import axios from "axios";
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
 import Cookies from "universal-cookie";
+import UserContext from "../contexts/UserContext";
+import { TodoAPI } from "../utils/axios";
+import { useTodoDispatch } from "./TodoContext";
 
 const cookies = new Cookies();
 
@@ -64,15 +66,25 @@ const Input = styled.input`
   box-sizing: border-box;
 `;
 
-function LoginForm({ currentUsername, setCurrentUsername }) {
+function LoginForm() {
+  const { state, actions } = useContext(UserContext);
   const [inputs, setInputs] = useState({
     username: "",
     password: "",
+    passwordCheck: "",
   });
-  const { username, password } = inputs; // 입력받은 username / password
+  const { username, password, passwordCheck } = inputs; // 입력받은 username / password / passwordCheck
   const usernameInput = useRef(); // Username 입력 focus 위해 사용
   const passwordInput = useRef(); // Password 입력 focus 위해 사용
+  const passwordCheckInput = useRef(); // PasswordCheck 입력 focus 위해 사용
+  const [passwordCheckDisplay, setPasswordCheckDisplay] = useState(false); // PasswordCheck 입력 표시 여부
   const navigate = useNavigate(); // 로그인 성공 후 navigate 위해 사용
+  const dispatch = useTodoDispatch();
+
+  const setPasswordCheckInput = (node) => {
+    if (node) passwordCheckInput.current = node;
+    passwordCheckInput.current.focus();
+  };
 
   const onChange = (e) => {
     const { value, name } = e.target;
@@ -96,14 +108,13 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
     }
 
     async function checkUser() {
-      await axios
-        .post("http://localhost:3001/user/login", inputs, {
-          withCredentials: true,
-        })
+      await TodoAPI.post("/user/login", inputs, {
+        withCredentials: true,
+      })
         .then((res) => {
           switch (res.data) {
             case "OK":
-              setCurrentUsername(username);
+              actions.setUsername(username);
               alert(`성공적으로 로그인되었습니다. 안녕하세요, ${username}님!`);
               navigate("/");
               break;
@@ -142,9 +153,34 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
       return;
     }
 
+    if (username.length < 4 || username.length > 20) {
+      alert("Username은 4~20글자만 가능합니다.");
+      usernameInput.current.focus();
+      return;
+    }
+    if (password.length < 8 || password.length > 20) {
+      alert("Password는 8~20글자만 가능합니다.");
+      passwordInput.current.focus();
+      return;
+    }
+
+    if (!passwordCheckDisplay) {
+      setPasswordCheckDisplay(true);
+      return;
+    }
+    if (!passwordCheck) {
+      alert("Password Check를 입력해주세요.");
+      passwordCheckInput.current.focus();
+      return;
+    }
+    if (password !== passwordCheck) {
+      alert("Password와 Password Check이 다릅니다.");
+      passwordCheckInput.current.focus();
+      return;
+    }
+
     async function checkUser() {
-      await axios
-        .post("http://localhost:3001/user/register", inputs)
+      await TodoAPI.post("/user/register", inputs)
         .then((res) => {
           switch (res.data) {
             case "OK":
@@ -152,20 +188,17 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
                 `${username} 계정을 성공적으로 생성하였습니다. 다시 로그인해주세요.`
               );
 
-              // username과 password input field 초기화
-              setInputs({ username: "", password: "" });
+              setInputs({ username: "", password: "", passwordCheck: "" });
 
-              // username field에 focus
+              setPasswordCheckDisplay(false);
               usernameInput.current.focus();
               break;
             case "USER_EXISTS":
               alert(`${username} 계정이 이미 존재합니다.`);
 
-              // password input field 초기화
-              setInputs({ ...inputs, password: "" });
+              setInputs({ ...inputs, password: "", passwordCheck: "" });
 
-              // password field에 focus
-              passwordInput.current.focus();
+              usernameInput.current.focus();
               break;
             default:
               alert("알 수 없는 오류가 발생했습니다.");
@@ -182,8 +215,9 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
 
   const onLogout = (e) => {
     e.preventDefault();
-    setCurrentUsername(undefined);
+    actions.setUsername(null);
     cookies.remove("user");
+    dispatch({ type: "INIT", todo: [] });
 
     alert("로그아웃되었습니다.");
     navigate("/");
@@ -192,14 +226,14 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
   const onUnregister = (e) => {
     e.preventDefault();
     async function checkUser() {
-      await axios
-        .post("http://localhost:3001/user/unregister", {
-          username: currentUsername,
-        })
+      await TodoAPI.post("/user/unregister", {
+        username: state.username,
+      })
         .then((res) => {
           switch (res.data) {
             case "OK":
-              alert(`${username} 계정을 성공적으로 삭제하였습니다.`);
+              alert(`${state.username} 계정을 성공적으로 삭제하였습니다.`);
+              dispatch({ type: "INIT", todo: [] });
               navigate("/");
               break;
             default:
@@ -211,17 +245,22 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
           console.log(err);
           alert("알 수 없는 오류가 발생했습니다.");
         });
-      setCurrentUsername(undefined);
+      actions.setUsername(null);
       cookies.remove("user");
     }
-    checkUser();
+    if (
+      window.confirm(
+        `정말 ${state.username} 계정을 삭제하시겠습니까? 이 계정의 정보 및 투두리스트가 영구적으로 삭제되며, 되돌릴 수 없습니다.`
+      )
+    )
+      checkUser();
   };
 
-  if (!!currentUsername) {
+  if (state.username) {
     // 로그인 된 화면
     return (
       <LoginFormBlock>
-        <h1>안녕하세요, {currentUsername}님!</h1>
+        <h1>안녕하세요, {state.username}님!</h1>
         <button onClick={onLogout}>로그아웃</button>
         <button onClick={onUnregister}>회원탈퇴</button>
       </LoginFormBlock>
@@ -253,6 +292,19 @@ function LoginForm({ currentUsername, setCurrentUsername }) {
           ref={passwordInput}
         />
       </div>
+      {passwordCheckDisplay && (
+        <div>
+          Password:{" "}
+          <Input
+            type="password"
+            name="passwordCheck"
+            value={passwordCheck}
+            onChange={onChange}
+            placeholder="Password Check"
+            ref={setPasswordCheckInput}
+          />
+        </div>
+      )}
       <button onClick={onLoginSubmit}>로그인</button>
       <button onClick={onRegisterSubmit}>회원가입</button>
     </LoginFormBlock>

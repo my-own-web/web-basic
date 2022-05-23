@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const mysql = require("mysql2/promise");
 const dotenv = require("dotenv").config();
+const { randomBytes, scrypt } = require("crypto");
 const options = {
   host: process.env.MYSQL_HOST,
   user: process.env.MYSQL_USER,
@@ -25,25 +26,32 @@ exports.createToken = async (req, res) => {
   const conn = await pool.getConnection();
 
   try {
-    const [rows] = await conn.query(
-      `SELECT * FROM user WHERE username = '${req.body.username}' AND password = '${req.body.password}'`
-    );
+    const [rows] = await conn.query("SELECT * FROM user WHERE username = ?", [
+      req.body.username,
+    ]);
 
     if (rows.length) {
-      const token = jwt.sign(
-        {
-          username: rows[0].username,
-        },
-        SECRET_KEY,
-        {
-          expiresIn: "1h",
-        }
-      );
-      res.cookie("user", token, {
-        path: "/",
-        maxAge: 60 * 60 * 1000,
+      const [password, salt] = rows[0].password.split("$");
+
+      scrypt(req.body.password, salt, 64, (err, derivedKey) => {
+        if (err) throw err;
+        if (derivedKey.toString("base64") == password) {
+          const token = jwt.sign(
+            {
+              username: rows[0].username,
+            },
+            SECRET_KEY,
+            {
+              expiresIn: "1h",
+            }
+          );
+          res.cookie("user", token, {
+            path: "/",
+            maxAge: 60 * 60 * 1000,
+          });
+          res.send("OK");
+        } else res.send("USER_NOT_FOUND");
       });
-      res.send("OK");
     } else {
       res.send("USER_NOT_FOUND");
     }
@@ -62,14 +70,20 @@ exports.createNewUser = async (req, res) => {
   const conn = await pool.getConnection();
 
   try {
-    const [rows] = await conn.query(
-      `SELECT * FROM user WHERE username = '${req.body.username}'`
-    );
+    const [rows] = await conn.query("SELECT * FROM user WHERE username = ?", [
+      req.body.username,
+    ]);
 
     if (!rows.length) {
-      await conn.query(
-        `INSERT INTO user (username, password) VALUES ('${req.body.username}', '${req.body.password}')`
-      );
+      const salt = randomBytes(32).toString("base64");
+
+      scrypt(req.body.password, salt, 64, async (err, derivedKey) => {
+        if (err) throw err;
+        await conn.query(
+          "INSERT INTO user (username, password) VALUES (?, ?)",
+          [req.body.username, `${derivedKey.toString("base64")}$${salt}`]
+        );
+      });
       res.send("OK");
     } else {
       res.send("USER_EXISTS");
@@ -89,9 +103,12 @@ exports.removeUser = async (req, res) => {
   const conn = await pool.getConnection();
 
   try {
-    await conn.query(
-      `DELETE FROM user WHERE username = '${req.body.username}'`
-    );
+    await conn.query("DELETE FROM user WHERE username = ?", [
+      req.body.username,
+    ]);
+    await conn.query("DELETE FROM todo WHERE username = ?", [
+      req.body.username,
+    ]);
     res.send("OK");
   } catch (err) {
     console.log(err);

@@ -1,13 +1,15 @@
 import Main from "./Main";
 import styled, { createGlobalStyle } from "styled-components";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 import TodoTemplate from "./components/TodoTemplate";
 import LoginForm from "./components/LoginForm";
 import MenuTemplate from "./components/MenuTemplate";
 import { TodoProvider } from "./components/TodoContext";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useContext, useEffect } from "react";
 import Cookies from "universal-cookie";
+import UserContext from "./contexts/UserContext";
+import { TodoAPI } from "./utils/axios";
+import Page from "./Page";
 
 const cookies = new Cookies();
 
@@ -34,18 +36,18 @@ const MenuStyle = {
 };
 
 const App = () => {
-  const [currentUsername, setCurrentUsername] = useState();
+  const { state, actions } = useContext(UserContext);
 
   async function verifyToken() {
-    await axios
-      .post("http://localhost:3001/user/auth", null, {
-        withCredentials: true,
-      })
+    await TodoAPI.post("/user/auth", null, {
+      withCredentials: true,
+    })
       .then((res) => {
-        setCurrentUsername(res.data);
+        actions.setUsername(res.data);
       })
       .catch((err) => {
         console.log("Invalid token, removing the cookie");
+        actions.setUsername(null);
         cookies.remove("user");
       });
   }
@@ -53,7 +55,8 @@ const App = () => {
   useEffect(() => {
     if (cookies.get("user") && cookies.get("user") !== "undefined")
       verifyToken();
-  }, []);
+    else actions.setUsername(null);
+  }, [state]);
 
   return (
     <TodoProvider>
@@ -66,20 +69,36 @@ const App = () => {
         </Menu>
         <Menu>
           <Link to="/login" style={MenuStyle}>
-            {!currentUsername ? "Login" : currentUsername}
+            {!state.username ? "Login" : state.username}
           </Link>
         </Menu>
       </MenuTemplate>
       <TodoTemplate>
         <Routes>
-          <Route path="/" element={<Main />} />
+          <Route
+            path="/"
+            element={
+              state.username !== null ? (
+                <Page>
+                  <Main />
+                </Page>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
           <Route
             path="/login"
             element={
-              <LoginForm
-                currentUsername={currentUsername}
-                setCurrentUsername={setCurrentUsername}
-              />
+              state.username !== null ? (
+                <Page title="User Info">
+                  <LoginForm />
+                </Page>
+              ) : (
+                <Page title="Login">
+                  <LoginForm />
+                </Page>
+              )
             }
           />
         </Routes>
